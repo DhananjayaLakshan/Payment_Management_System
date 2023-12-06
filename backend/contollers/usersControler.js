@@ -14,6 +14,13 @@ const getAllUsers = async (req,res) => {
 
 }
 
+//Get all
+const loginUser = async (req,res) => {
+    
+    
+
+}
+
 
 
 //Get one
@@ -48,15 +55,12 @@ const createNewUser = async (req,res ) => {
 
     const { userName, email, password } = req.body
 
-    //add doc to db
     try {
-        const user = await Users.create({ userName, email, password })
-        res.status(200).json(user)
-
+        const user = await Users.signup(userName, email, password)
+        res.status(200).json({userName, email,user})
     } catch (error) {
-        res.status(400).json({ error: error.message })
+        res.status(400).json({error: error.message})
     }
-
 }
 
 
