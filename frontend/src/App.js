@@ -1,15 +1,38 @@
 import {BrowserRouter, Routes, Route } from 'react-router-dom'
 import Home from './pages/Home';
+import Sidebar from './components/Sidebar';
+import { useState } from 'react';
 
 function App() {
+  
+  const [toggle,setToggle] = useState(false)
+
+  const Toggle = () => {
+      setToggle(!toggle)
+  }
+
+
   return (
-    <div className="App">
-      <BrowserRouter>
-        <div className="pages">
+    <div className="container-fluid bg-secondary min-vh-100">
+      <BrowserRouter>       
+
+        <div className='row'>
           
-          <Route path="/" element={<Home/>} />
+          { toggle && <div className="col-2 bg-white vh-100 sideBar">
+            <Sidebar />
+          </div>
+          }
+          
+          <div className="pages col">
+            <Routes>
+
+              <Route path="/" element={<Home Toggle={Toggle}/>} />
+
+            </Routes>
+          </div>
 
         </div>
+
       </BrowserRouter>
     </div>
   );

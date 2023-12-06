@@ -1,7 +1,11 @@
 import React from 'react'
+import Navbar from '../components/Navbar'
 
-export default function Home() {
+export default function Home({Toggle}) {
     return (
-        <div>Home</div>
+        <div>
+            <Navbar Toggle={Toggle}/>           
+            Home
+        </div>
     )
 }
