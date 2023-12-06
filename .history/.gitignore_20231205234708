@@ -14,3 +14,6 @@ logs/
 # Editor-specific files
 .vscode/
 .idea/
+
+# Dependencies
+package-lock.json
