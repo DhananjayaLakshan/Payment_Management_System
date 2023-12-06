@@ -5,13 +5,17 @@ const {
     getAllUsers,
     getOneUser,
     updateUser,
-    deleteUser
+    deleteUser,
+    loginUser
 } = require('../contollers/usersControler')
 
 const router = express.Router()
 
 //Get all users
 router.get ('/', getAllUsers)
+
+//login
+router.post ('/login', loginUser)
 
 //Get one user
 router.get ('/:id', getOneUser)
