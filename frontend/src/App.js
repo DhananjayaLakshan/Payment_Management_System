@@ -2,6 +2,7 @@ import {BrowserRouter, Routes, Route } from 'react-router-dom'
 import Home from './pages/Home';
 import Sidebar from './components/Sidebar';
 import { useState } from 'react';
+import Navbar from './components/Navbar';
 
 function App() {
   
@@ -17,6 +18,7 @@ function App() {
       <BrowserRouter>       
 
         <div className='row'>
+            <Navbar Toggle={Toggle}/> 
           
           { toggle && <div className="col-2 bg-white vh-100 sideBar">
             <Sidebar />
@@ -26,7 +28,7 @@ function App() {
           <div className="pages col">
             <Routes>
 
-              <Route path="/" element={<Home Toggle={Toggle}/>} />
+              <Route path="/" element={<Home/>} />
 
             </Routes>
           </div>

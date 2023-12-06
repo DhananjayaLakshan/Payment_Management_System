@@ -3,8 +3,8 @@ import { FiAlignRight } from "react-icons/fi";
 
 export default function Navbar({Toggle}) {
     return (
-        <header>
-            <nav class="navbar navbar-expand-lg bg-body-tertiary container-fluid row">
+        <>
+            <nav class="navbar navbar-expand-lg bg-body-tertiary">
                 <div class="container-fluid">
                     <i className="btn btn-primary m-2" onClick={Toggle}><FiAlignRight /></i>
 
@@ -42,6 +42,6 @@ export default function Navbar({Toggle}) {
                     </div>
                 </div>
             </nav>
-        </header>
+        </>
     )
 }
