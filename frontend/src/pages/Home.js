@@ -1,9 +1,13 @@
 import React from 'react'
+import { CiSquarePlus } from "react-icons/ci";
 
 export default function Home() {
     return (
         <div>
             <h1>Home</h1>
+
+
+            <button className='btn btn-primary my-2 ms-auto addbtn'> Add task </button>
 
             <table className="table table-striped">
                 <thead>
@@ -12,8 +16,8 @@ export default function Home() {
                         <th scope="col">Email</th>
                         <th scope="col">Admin Account</th>
                         <th scope="col">Payment</th>
-                        <th scope="col">paid</th>
-                        <th scope="col">pending</th>
+                        <th scope="col">Paid</th>
+                        <th scope="col">Pending</th>
                         <th scope="col">Mobile Number</th>
                         <th scope="col">Starting Date</th>
                         <th scope="col">Due Date</th>

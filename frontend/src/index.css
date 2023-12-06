@@ -12,4 +12,11 @@
   margin-right: auto;
   margin-top: 5%;
   border-radius:15px;
+  
+}
+
+.addbtn{
+  display: flex;
+  justify-content: flex-end;
+  font-weight: 500;
 }

@@ -29,8 +29,7 @@ const getSingleWorkout = async (req, res) => {
             res.status(200).json(workout);
         }
 
-    } catch (error) {        
-        // Handle any errors that occur during the execution of the function
+    } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Internal Server Error' })
     }
