@@ -4,6 +4,7 @@ import Sidebar from './components/Sidebar';
 import { useState } from 'react';
 import Navbar from './components/Navbar';
 import Login from './pages/Login';
+import Register from './pages/Register';
 
 function App() {
   
@@ -31,6 +32,8 @@ function App() {
 
               <Route path="/" element={<Home/>} />
               <Route path="/login" element={<Login/>} />
+              <Route path="/register" element={<Register/>} />
+
 
 
             </Routes>

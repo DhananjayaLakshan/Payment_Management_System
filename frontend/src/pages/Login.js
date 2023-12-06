@@ -5,7 +5,7 @@ export default function Login() {
         <>
             <form className='bg-white loginForm '>
             <fieldset>
-                <legend>Disabled fieldset example</legend>
+                <legend>Login</legend>
 
                 <div class="mb-3">
                     <label class="form-label">Email</label>
@@ -34,7 +34,7 @@ export default function Login() {
                     </div>
                 </div> */}
 
-                <button type="submit" class="btn btn-primary">Submit</button>
+                <button type="submit" class="btn btn-primary">Login</button>
             </fieldset>
         </form>
         </>
