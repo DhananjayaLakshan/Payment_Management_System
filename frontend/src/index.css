@@ -3,3 +3,17 @@
   color: beige;
   cursor: pointer;
 }
+
+.containerLogin{
+  
+}
+
+.loginForm{
+  padding: 5%;
+  background-color: antiquewhite;
+  width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 10%;
+  border-radius:15px;
+}

@@ -3,6 +3,7 @@ import Home from './pages/Home';
 import Sidebar from './components/Sidebar';
 import { useState } from 'react';
 import Navbar from './components/Navbar';
+import Login from './pages/Login';
 
 function App() {
   
@@ -29,6 +30,8 @@ function App() {
             <Routes>
 
               <Route path="/" element={<Home/>} />
+              <Route path="/login" element={<Login/>} />
+
 
             </Routes>
           </div>
