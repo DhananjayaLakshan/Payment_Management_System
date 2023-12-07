@@ -21,7 +21,7 @@ export default function Register() {
                 closeOnClick: true,
                 pauseOnHover: true,
                 draggable: true,
-                progress: undefined,
+                progress: undefined, 
                 theme: "light",
             })
         }
@@ -37,29 +37,6 @@ export default function Register() {
 
     
     }
-
-    // useEffect(() => {
-    //     // Check for error and show toast
-    //     if (!error) {
-    //         toast.success('Sign Up successfully', {
-    //             position: "top-right",
-    //             autoClose: 5000,
-    //             hideProgressBar: false,
-    //             closeOnClick: true,
-    //             pauseOnHover: true,
-    //             draggable: true,
-    //             progress: undefined,
-    //             theme: "light",
-    //             })
-    //     }
-
-    //     setEmail('')
-    //     setPassword('')
-    //     setUserName('')
-
-    // }, [error])
-
-
 
     return (
         <>

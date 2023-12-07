@@ -1,10 +1,17 @@
-import React from 'react'
 import { FiAlignRight } from "react-icons/fi";
 import { FaHome } from "react-icons/fa";
 import { LuLogOut } from "react-icons/lu";
 import { Link } from 'react-router-dom';
+import { useLogout } from '../hooks/useLogout';
 
 export default function Navbar({Toggle}) {
+
+    const  { logout } = useLogout()
+
+    const handleLogOut = () => {
+        logout()
+    }
+
     return (
         <>
             <nav class="navbar navbar-expand-lg bg-body-tertiary">
@@ -50,7 +57,7 @@ export default function Navbar({Toggle}) {
                             </li>
                         </ul>
 
-                        <form class="d-flex" role="search">
+                    <div>
                         <Link to='/login'>
                             <button class="btn btn-outline-primary me-2" type="submit">Login</button>
                         </Link>  
@@ -58,11 +65,13 @@ export default function Navbar({Toggle}) {
                         <Link to='/register'>  
                             <button class="btn btn-outline-primary me-2" type="submit">Sign in</button>
                         </Link>
+                    </div>
 
+                        <form class="d-flex" role="search" onSubmit={handleLogOut}>
                             {/* <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search"/>
                             <button class="btn btn-outline-success" type="submit">Search</button> */}
-                            <button class="btn btn-outline-primary ms-2" type="submit"><LuLogOut /></button>
 
+                            <button class="btn btn-outline-primary ms-2" type="submit"><LuLogOut /></button>
                         </form>
 
                     </div>
