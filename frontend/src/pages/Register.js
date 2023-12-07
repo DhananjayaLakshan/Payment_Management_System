@@ -31,11 +31,7 @@ export default function Register() {
     
     const handleSubmit = async (e) => {
         e.preventDefault()
-        let errorr = await signup(userName, email, password)
-
-        console.log(errorr);
-
-    
+        await signup(userName, email, password)  
     }
 
     return (
