@@ -1,10 +1,11 @@
 import React, { useState } from 'react'
 import { useWorkoutsContext } from '../hooks/useWorkoutsContext'
-
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function AddTask() {
-    
-    const {dispatch} = useWorkoutsContext()
+
+    const { dispatch } = useWorkoutsContext()
     const [name, setName] = useState('')
     const [email, setEmail] = useState('')
     const [adminAccount, setAdminAccount] = useState('')
@@ -24,17 +25,48 @@ export default function AddTask() {
 
         // Form validation
         if (!name || !email || !adminAccount || !payment || !mobileNumber) {
-            setError('All fields must be filled');
+            
+            {toast.warn('All fields must be filled', {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            })}
             return;
         }
 
         if (isNaN(payment) || Number(payment) <= 0) {
-            setError('Payment must be a valid number greater than 0');
+
+            {toast.warn('Payment must be a valid number greater than 0' , {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            })}
+
             return;
         }
 
         if (!/^\d{10}$/.test(mobileNumber)) {
-            setError('Mobile Number must be a 10-digit number');
+            
+            {toast.warn('Mobile Number must be a 10-digit number' , {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            })}
             return;
         }
 
@@ -70,6 +102,17 @@ export default function AddTask() {
         }
 
         if (response.ok) {
+            toast.success('Added Successfully', {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            });
+
             setName('');
             setEmail('');
             setAdminAccount('');
@@ -86,7 +129,7 @@ export default function AddTask() {
             setSuccess('New task added')
             console.log('New task added')
 
-            dispatch({type: 'CREATE_WORKOUT', payload: json})
+            dispatch({ type: 'CREATE_WORKOUT', payload: json })
         }
     };
 
@@ -226,21 +269,14 @@ export default function AddTask() {
                 </div>
 
 
-                {error && 
-                    <div class="alert alert-danger" role="alert">
-                        {error}
-                    </div>
-                }
+                
 
-                {success && 
-                    <div class="alert alert-success" role="alert">
-                        {success}
-                    </div>
-                }
 
                 <button type="submit" class="btn btn-primary">Submit</button>
             </fieldset>
+            <ToastContainer />
         </form>
+
     )
 
 }

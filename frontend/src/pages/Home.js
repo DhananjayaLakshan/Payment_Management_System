@@ -3,28 +3,31 @@ import { Link } from 'react-router-dom'
 import { useWorkoutsContext } from '../hooks/useWorkoutsContext'
 import { MdDeleteForever } from "react-icons/md"
 import { TiEdit } from "react-icons/ti"
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function Home() {
 
     const { workouts, dispatch } = useWorkoutsContext()
-    const [dublicateWorkot, setDublicateWorkot] = useState([]); // Corrected function name
+    const [dublicateWorkot, setDublicateWorkot] = useState([])
 
+//fetch
     useEffect(() => {
         const fetchWorkouts = async () => {
-            const response = await fetch('/api/workouts');
-            const json = await response.json();
+            const response = await fetch('/api/workouts')
+            const json = await response.json()
 
-            setDublicateWorkot(json);
+            setDublicateWorkot(json)
 
             if (response.ok) {
-                dispatch({ type: 'SET_WORKOUT', payload: json });
+                dispatch({ type: 'SET_WORKOUT', payload: json })
             }
-        };
+        }
 
-        fetchWorkouts();
-    }, []);
+        fetchWorkouts()
+    }, [])
 
-    console.log(dublicateWorkot);
+    console.log(dublicateWorkot)
 
     const handleDelete = async (id) => {
         console.log('/api/workouts/'+ id);
@@ -37,6 +40,16 @@ export default function Home() {
         const json = await response.json()
 
         if (response.ok) {
+            toast.success('Deleted Successfully', {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+                });
             dispatch({type: 'DELETE_WORKOUT', payload: json})
             console.log('deleted');
         }
@@ -103,6 +116,7 @@ export default function Home() {
 
                 </tbody>
             </table>
+            <ToastContainer />
         </div>
     )
 }
