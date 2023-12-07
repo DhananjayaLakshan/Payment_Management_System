@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from 'react'
-import { CiSquarePlus } from "react-icons/ci";
-import { Link } from 'react-router-dom';
+import React, { useEffect } from 'react'
+import { Link } from 'react-router-dom'
+import { useWorkoutsContext } from '../hooks/useWorkoutsContext'
+import { MdDeleteForever } from "react-icons/md"
+import { TiEdit } from "react-icons/ti"
 
 export default function Home() {
 
-    const [workouts, setWorkouts] = useState(null)
+    const {workouts, dispatch} = useWorkoutsContext()
 
     useEffect( () => {
 
@@ -13,7 +15,7 @@ export default function Home() {
             const json = await response.json()
 
             if(response.ok){
-                setWorkouts(json)
+                dispatch({type: 'SET_WORKOUT', payload: json})
             }
         }
 
@@ -71,7 +73,10 @@ export default function Home() {
                         <td scope="col">{workout.duration}</td>
                         <td scope="col">{workout.group}</td>
                         <td scope="col">{workout.paymentUpdate}</td>
-                        <td scope="col"></td>
+                        <td scope="col">
+                            <button className='btn btn-outline-primary me-2 mt-2'><TiEdit style={{fontSize:'20px'}}/></button>
+                            <button className='btn btn-danger mt-2'><MdDeleteForever style={{fontSize:'20px'}}/></button>
+                        </td>
 
                     </tr>
 

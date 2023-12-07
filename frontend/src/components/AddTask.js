@@ -1,7 +1,10 @@
 import React, { useState } from 'react'
+import { useWorkoutsContext } from '../hooks/useWorkoutsContext'
+
 
 export default function AddTask() {
-
+    
+    const {dispatch} = useWorkoutsContext()
     const [name, setName] = useState('')
     const [email, setEmail] = useState('')
     const [adminAccount, setAdminAccount] = useState('')
@@ -81,7 +84,9 @@ export default function AddTask() {
 
             setError(null);
             setSuccess('New task added')
-            console.log('New task added');
+            console.log('New task added')
+
+            dispatch({type: 'CREATE_WORKOUT', payload: json})
         }
     };
 
