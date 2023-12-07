@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useWorkoutsContext } from '../hooks/useWorkoutsContext'
 import { MdDeleteForever } from "react-icons/md"
@@ -6,24 +6,43 @@ import { TiEdit } from "react-icons/ti"
 
 export default function Home() {
 
-    const {workouts, dispatch} = useWorkoutsContext()
+    const { workouts, dispatch } = useWorkoutsContext()
+    const [dublicateWorkot, setDublicateWorkot] = useState([]); // Corrected function name
 
-    useEffect( () => {
+    useEffect(() => {
+        const fetchWorkouts = async () => {
+            const response = await fetch('/api/workouts');
+            const json = await response.json();
 
-        const fetchWorkouts = async() => {
-            const response = await fetch('/api/workouts')
-            const json = await response.json()
+            setDublicateWorkot(json);
 
-            if(response.ok){
-                dispatch({type: 'SET_WORKOUT', payload: json})
+            if (response.ok) {
+                dispatch({ type: 'SET_WORKOUT', payload: json });
             }
+        };
+
+        fetchWorkouts();
+    }, []);
+
+    console.log(dublicateWorkot);
+
+    const handleDelete = async (id) => {
+        console.log('/api/workouts/'+ id);
+        const response = await fetch('/api/workouts/'+ id, {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' }
+        });
+
+
+        const json = await response.json()
+
+        if (response.ok) {
+            dispatch({type: 'DELETE_WORKOUT', payload: json})
+            console.log('deleted');
         }
 
-        fetchWorkouts()
 
-    }, [])
-
-
+    }
 
     return (
         <div>
@@ -35,7 +54,7 @@ export default function Home() {
 
             <table className="table table-striped">
                 <thead>
-                    
+
                     <tr>
                         <th scope="col">Name</th>
                         <th scope="col">Email</th>
@@ -54,34 +73,34 @@ export default function Home() {
                 </thead>
                 <tbody>
 
-                {workouts && workouts.map((workout) => (
-                
+                    {workouts && workouts.map((workout) => (
 
-                <tr  key={workout._id}>
-                        <td scope="col">{workout.name}</td>
-                        <td scope="col">{workout.email}</td>
-                        <td scope="col">{workout.adminAccount}</td>
-                        <td scope="col">{workout.payment}</td>
 
-                        <td scope="col">
-                            {workout.status}
-                        </td>
+                        <tr key={workout._id}>
+                            <td scope="col">{workout.name}</td>
+                            <td scope="col">{workout.email}</td>
+                            <td scope="col">{workout.adminAccount}</td>
+                            <td scope="col">{workout.payment}</td>
 
-                        <td scope="col">{workout.mobileNumber}</td>
-                        <td scope="col">{workout.startDate}</td>
-                        <td scope="col">{workout.dueDate}</td>
-                        <td scope="col">{workout.duration}</td>
-                        <td scope="col">{workout.group}</td>
-                        <td scope="col">{workout.paymentUpdate}</td>
-                        <td scope="col">
-                            <button className='btn btn-outline-primary me-2 mt-2'><TiEdit style={{fontSize:'20px'}}/></button>
-                            <button className='btn btn-danger mt-2'><MdDeleteForever style={{fontSize:'20px'}}/></button>
-                        </td>
+                            <td scope="col">
+                                {workout.status}
+                            </td>
 
-                    </tr>
+                            <td scope="col">{workout.mobileNumber}</td>
+                            <td scope="col">{workout.startDate}</td>
+                            <td scope="col">{workout.dueDate}</td>
+                            <td scope="col">{workout.duration}</td>
+                            <td scope="col">{workout.group}</td>
+                            <td scope="col">{workout.paymentUpdate}</td>
+                            <td scope="col">
+                                <button className='btn btn-outline-primary me-2 mt-2'><TiEdit style={{ fontSize: '20px' }} /></button>
+                                <button className='btn btn-danger mt-2' onClick={() => handleDelete(workout._id)}><MdDeleteForever style={{ fontSize: '20px' }} /></button>
+                            </td>
 
-            ))}
-                    
+                        </tr>
+
+                    ))}
+
                 </tbody>
             </table>
         </div>
