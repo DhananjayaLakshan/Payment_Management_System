@@ -1,13 +1,15 @@
 import React from 'react'
 import { CiSquarePlus } from "react-icons/ci";
+import { Link } from 'react-router-dom';
 
 export default function Home() {
     return (
         <div>
             <h1>Home</h1>
 
-
-            <button className='btn btn-primary my-2 ms-auto addbtn'> Add task </button>
+            <Link to='/addTask'>
+                <button className='btn btn-primary my-2 ms-auto addbtn'> Add task </button>
+            </Link>
 
             <table className="table table-striped">
                 <thead>

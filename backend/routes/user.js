@@ -22,7 +22,7 @@ router.get ('/:id', getOneUser)
 
 
 //Add a user
-router.post ('/', createNewUser)
+router.post ('/signup', createNewUser)
 
 
 //Delete a user

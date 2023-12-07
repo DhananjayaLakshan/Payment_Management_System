@@ -38,11 +38,11 @@ const getSingleWorkout = async (req, res) => {
 //CREATE new 
 const createWorkout = async (req, res) => {
 
-    const { title, load, reps } = req.body
+    const { name, email, adminAccount, payment, paid, pending, mobileNumber, startDate, dueDate, duration, group, paymentUpdate  } = req.body
 
     //add doc to db
     try {
-        const workout = await Workout.create({ title, load, reps })
+        const workout = await Workout.create({ name, email, adminAccount, payment, paid, pending, mobileNumber, startDate, dueDate, duration, group, paymentUpdate  })
         res.status(200).json(workout)
 
     } catch (error) {

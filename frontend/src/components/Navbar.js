@@ -51,8 +51,16 @@ export default function Navbar({Toggle}) {
                         </ul>
 
                         <form class="d-flex" role="search">
-                            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search"/>
-                            <button class="btn btn-outline-success" type="submit">Search</button>
+                        <Link to='/login'>
+                            <button class="btn btn-outline-primary me-2" type="submit">Login</button>
+                        </Link>  
+
+                        <Link to='/register'>  
+                            <button class="btn btn-outline-primary me-2" type="submit">Sign in</button>
+                        </Link>
+
+                            {/* <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search"/>
+                            <button class="btn btn-outline-success" type="submit">Search</button> */}
                             <button class="btn btn-outline-primary ms-2" type="submit"><LuLogOut /></button>
 
                         </form>

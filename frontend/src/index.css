@@ -15,6 +15,23 @@
   
 }
 
+.addTask{
+  padding: 3%;
+  background-color: antiquewhite;
+  width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 1%;
+  border-radius:15px;
+  
+}
+
+legend{
+  font-weight: 500;
+  font-size: xx-large;
+  text-align: center;
+}
+
 .addbtn{
   display: flex;
   justify-content: flex-end;
