@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { useSignup } from '../hooks/useSignup';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function Register() {
     const [userName, setUserName] = useState('');
@@ -7,12 +9,57 @@ export default function Register() {
     const [password, setPassword] = useState('');
     // const [rePassword, setRePassword] = useState('');
     const { signup, isLoading, error } = useSignup();
+    
+    useEffect(() => {
+        // Check for error and show toast
 
+        if (error) {
+            toast.error(error, {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            })
+        }
+
+        
+    }, [error])
+    
     const handleSubmit = async (e) => {
-        e.preventDefault();
+        e.preventDefault()
+        let errorr = await signup(userName, email, password)
 
-        await signup( userName, email, password);
-    };
+        console.log(errorr);
+
+    
+    }
+
+    // useEffect(() => {
+    //     // Check for error and show toast
+    //     if (!error) {
+    //         toast.success('Sign Up successfully', {
+    //             position: "top-right",
+    //             autoClose: 5000,
+    //             hideProgressBar: false,
+    //             closeOnClick: true,
+    //             pauseOnHover: true,
+    //             draggable: true,
+    //             progress: undefined,
+    //             theme: "light",
+    //             })
+    //     }
+
+    //     setEmail('')
+    //     setPassword('')
+    //     setUserName('')
+
+    // }, [error])
+
+
 
     return (
         <>
@@ -52,25 +99,15 @@ export default function Register() {
                             value={password}
                         />
                     </div>
-{/* 
-                    <div className="mb-3">
-                        <label className="form-label">Confirm Password</label>
-                        <input
-                            type="password"
-                            className="form-control"
-                            placeholder="Confirm password"
-                            onChange={(e) => setRePassword(e.target.value)}
-                            value={rePassword}
-                        />
-                    </div> */}
 
                     <button type="submit" className="btn btn-primary">
                         Register
                     </button>
-
-                    {error && <div className="error">{error}</div>}
+                    
                 </fieldset>
             </form>
+            <ToastContainer />
+
         </>
     );
 }

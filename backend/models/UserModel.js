@@ -54,7 +54,6 @@ usersSchema.statics.signup = async function(userName, email, password) {
 
 
 //static login method
-
 usersSchema.statics.login = async function(email, password) {
     try {
         // Validate input
@@ -77,7 +76,9 @@ usersSchema.statics.login = async function(email, password) {
         }
 
         return user;
+
     } catch (error) {
+
         throw error;
     }
 };

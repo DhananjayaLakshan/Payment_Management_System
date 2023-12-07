@@ -25,7 +25,7 @@ export default function Home() {
         }
 
         fetchWorkouts()
-    }, [])
+    }, [dispatch])
 
     console.log(dublicateWorkot)
 
