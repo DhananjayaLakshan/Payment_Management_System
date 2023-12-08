@@ -8,10 +8,6 @@ export const useLogin = () => {
     const [isLoading, setIsLoading] = useState(false)
     const { dispatch } = useAuthContext()
 
-    // const ActionTypes = {
-    //     LOGIN: 'LOGIN',
-    // }
-
     const login = async ( email, password) => {
         setIsLoading(true)
         setError(null)

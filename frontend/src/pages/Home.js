@@ -5,6 +5,7 @@ import { MdDeleteForever } from "react-icons/md"
 import { TiEdit } from "react-icons/ti"
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useAuthContext } from '../hooks/useAuthContext'
 
 export default function Home() {
 
@@ -61,9 +62,11 @@ export default function Home() {
         <div>
             <h1>Home</h1>
 
+            <div>
             <Link to='/addTask'>
                 <button className='btn btn-primary my-2 ms-auto addbtn'> Add task </button>
             </Link>
+            </div>
 
             <table className="table table-striped">
                 <thead>
