@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { useWorkoutsContext } from '../hooks/useWorkoutsContext'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useAuthContext } from '../hooks/useAuthContext';
 
 export default function AddTask() {
 
@@ -20,8 +21,24 @@ export default function AddTask() {
     const [error, setError] = useState(null)
     const [success, setSuccess] = useState(null)
 
+    const {user} = useAuthContext()
+
     const handleLogin = async (e) => {
-        e.preventDefault();
+        e.preventDefault()
+
+        if (!user) {
+            {toast.warn('You must be logged in', {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            })}
+            return 
+        }
 
         // Form validation
         if (!name || !email || !adminAccount || !payment || !mobileNumber) {
@@ -91,7 +108,8 @@ export default function AddTask() {
             method: 'POST',
             body: JSON.stringify(tast),
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization':`Bearer ${user.token}`
             }
         });
 

@@ -11,11 +11,16 @@ export default function Home() {
 
     const { workouts, dispatch } = useWorkoutsContext()
     const [dublicateWorkot, setDublicateWorkot] = useState([])
+    const {user} = useAuthContext()
 
 //fetch
     useEffect(() => {
         const fetchWorkouts = async () => {
-            const response = await fetch('/api/workouts')
+            const response = await fetch('/api/workouts', {
+                headers: {
+                    'Authorization':`Bearer ${user.token}`
+                }
+            })
             const json = await response.json()
 
             setDublicateWorkot(json)
@@ -25,17 +30,24 @@ export default function Home() {
             }
         }
 
-        fetchWorkouts()
-    }, [dispatch])
+        if (user) {
+            fetchWorkouts()            
+        }
+
+    }, [dispatch, user])
 
     console.log(dublicateWorkot)
 
+//delete
     const handleDelete = async (id) => {
-        console.log('/api/workouts/'+ id);
+        console.log('/api/workouts/'+ id)
         const response = await fetch('/api/workouts/'+ id, {
             method: 'DELETE',
-            headers: { 'Content-Type': 'application/json' }
-        });
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization':`Bearer ${user.token}`
+            }
+        })
 
 
         const json = await response.json()
@@ -52,7 +64,7 @@ export default function Home() {
                 theme: "light",
                 });
             dispatch({type: 'DELETE_WORKOUT', payload: json})
-            console.log('deleted');
+            console.log('deleted')
         }
 
 
@@ -62,10 +74,10 @@ export default function Home() {
         <div>
             <h1>Home</h1>
 
-            <div>
-            <Link to='/addTask'>
-                <button className='btn btn-primary my-2 ms-auto addbtn'> Add task </button>
-            </Link>
+            <div className='addbtn'>
+                <Link to='/addTask'>
+                    <button className='btn btn-primary my-2 ms-auto '> Add task </button>
+                </Link>
             </div>
 
             <table className="table table-striped">

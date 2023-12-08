@@ -1,11 +1,12 @@
-import {BrowserRouter, Routes, Route } from 'react-router-dom'
-import Home from './pages/Home';
-import Sidebar from './components/Sidebar';
-import { useState } from 'react';
-import Navbar from './components/Navbar';
-import Login from './pages/Login';
-import Register from './pages/Register';
-import AddTask from './components/AddTask';
+import {BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { useAuthContext } from "../hooks/useAuthContext"
+import Home from './pages/Home'
+import Sidebar from './components/Sidebar'
+import { useState } from 'react'
+import Navbar from './components/Navbar'
+import Login from './pages/Login'
+import Register from './pages/Register'
+import AddTask from './components/AddTask'
 
 
 
@@ -48,7 +49,7 @@ function App() {
 
       </BrowserRouter>
     </div>
-  );
+  )
 }
 
 export default App;

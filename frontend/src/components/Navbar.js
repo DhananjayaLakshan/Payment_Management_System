@@ -76,7 +76,7 @@ export default function Navbar({ Toggle }) {
 
                         {user && (
                             <form class="d-flex" role="search" onSubmit={handleLogOut}>
-                                <span>{user.userName}</span>
+                                <span>{user.email}</span>
                                 <button class="btn btn-outline-primary ms-2" type="submit"><LuLogOut /></button>
                             </form>
                         )}
