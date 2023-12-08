@@ -18,8 +18,10 @@ export default function Navbar({ Toggle }) {
         <>
             <nav class="navbar navbar-expand-lg bg-body-tertiary">
                 <div class="container-fluid">
-
-                    <i className="btn btn-primary m-2" onClick={Toggle}><FiAlignRight /></i>
+                    
+                    {user &&
+                        <i className="btn btn-primary m-2" onClick={Toggle}><FiAlignRight /></i>
+                    }
 
                     <Link to='/'>
                         <a style={{ textDecoration: 'none' }} class="navbar-brand">Navbar</a>
@@ -76,7 +78,7 @@ export default function Navbar({ Toggle }) {
 
                         {user && (
                             <form class="d-flex" role="search" onSubmit={handleLogOut}>
-                                <span>{user.email}</span>
+                                <span className="me-3" style={{fontSize:'18px', fontWeight:'bold'}}>{user.email}</span>
                                 <button class="btn btn-outline-primary ms-2" type="submit"><LuLogOut /></button>
                             </form>
                         )}

@@ -1,5 +1,5 @@
-import {BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
-import { useAuthContext } from "../hooks/useAuthContext"
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { useAuthContext } from "./hooks/useAuthContext"
 import Home from './pages/Home'
 import Sidebar from './components/Sidebar'
 import { useState } from 'react'
@@ -11,36 +11,37 @@ import AddTask from './components/AddTask'
 
 
 function App() {
-  
-  const [toggle,setToggle] = useState(false)
+
+  const { user } = useAuthContext()
+  const [toggle, setToggle] = useState(false)
 
   const Toggle = () => {
-      setToggle(!toggle)
+    setToggle(!toggle)
   }
 
 
   return (
     <div className="container-fluid bg-secondary min-vh-100">
-      <BrowserRouter>       
+      <BrowserRouter>
 
         <div className='row'>
-            <Navbar Toggle={Toggle}/> 
-          
-          { toggle && <div className="col-2 bg-white vh-100 sideBar">
+          <Navbar Toggle={Toggle} />
+
+          {toggle && <div className="col-2 bg-white vh-100 sideBar">
             <Sidebar />
           </div>
           }
-          
+
           <div className="pages col">
             <Routes>
 
-              <Route path="/" element={<Home/>} />
-              <Route path="/login" element={<Login/>} />
-              <Route path="/register" element={<Register/>} />
-              <Route path="/addTask" element={<AddTask/>} />
-              
+              <Route path="/" element={user ? <Home /> : <Navigate to='/login' />} />
 
+              <Route path="/login" element={!user ? <Login /> : <Navigate to='/' />} />
 
+              <Route path="/register" element={!user ? <Register /> : <Navigate to='/' />} />
+
+              <Route path="/addTask" element={user ? <AddTask /> : <Navigate to='/login' />} />
 
             </Routes>
           </div>
