@@ -120,9 +120,19 @@ export default function Home() {
                 theme: "light",
             })
             dispatch({ type: 'DELETE_WORKOUT', payload: json })
-            window.location.href = '/'
             console.log('deleted')
-        }
+        
+        // Update the local state without refreshing the page
+        setWorkouts((prevWorkouts) => {
+            const updatedWorkouts = prevWorkouts.filter((workout) => workout._id !== id);
+            return updatedWorkouts;
+        });
+    } else {
+        console.error('Failed to delete workout');
+    }
+
+
+        
     }
 
     //update
