@@ -161,15 +161,21 @@ export default function Home() {
             });
             dispatch({ type: 'UPDATE_WORKOUT', payload: json });
         }
-
-        // Update the local state without refreshing the page
+    
+        // Update both local and original state
         setWorkouts((prevWorkouts) => {
             const updatedWorkouts = prevWorkouts.map((workout) =>
                 workout._id === id ? { ...workout, status: newStatus } : workout
             );
             return updatedWorkouts;
         });
-
+    
+        setDublicateWorkot((prevWorkouts) => {
+            const updatedWorkouts = prevWorkouts.map((workout) =>
+                workout._id === id ? { ...workout, status: newStatus } : workout
+            );
+            return updatedWorkouts;
+        });
     };
 
     return (
