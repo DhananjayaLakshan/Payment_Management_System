@@ -1,4 +1,4 @@
-import React, { useEffect, useState, Navigate } from 'react'
+import React, { useEffect, useState, Navigate , useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { useWorkoutsContext } from '../hooks/useWorkoutsContext'
 import { MdDeleteForever } from "react-icons/md"
@@ -7,6 +7,9 @@ import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { useAuthContext } from '../hooks/useAuthContext'
 import { FiRefreshCcw } from "react-icons/fi"
+import ExcelJS from 'exceljs'
+import saveAs from 'file-saver'
+import * as XLSX from 'xlsx'
 
 export default function Home() {
 
@@ -20,12 +23,63 @@ export default function Home() {
     const [type, settype] = useState('all')
     const [searchDate, setSearchDate] = useState('')
 
+    const [data, setdata] = useState([])
 
     const refresh = () => {
         // Use window.location.href to navigate to the home page
         console.log('Refresh function is called!')
         window.location.reload()
     }
+
+    // Function to generate and download the Excel report
+    const generateExcelReport = () => {
+        if (wworkouts.length === 0) {
+            alert('No workout data to export.');
+            return;
+        }
+
+        // Create a new Excel workbook
+        const workbook = new ExcelJS.Workbook();
+        const worksheet = workbook.addWorksheet('Workouts');
+
+        // Define the header row
+        worksheet.addRow([
+            'Name',
+            'Email',
+            'Admin Account',
+            'Payment',
+            'Status',
+            'Mobile Number',
+            'Starting Date',
+            'Due Date',
+            'Duration',
+            'Group',
+            'Payment Update',
+        ]);
+
+        // Add data rows
+        wworkouts.forEach((workout) => {
+            worksheet.addRow([
+                workout.name,
+                workout.email,
+                workout.adminAccount,
+                workout.payment,
+                workout.status,
+                workout.mobileNumber,
+                workout.startDate,
+                workout.dueDate,
+                workout.duration,
+                workout.group,
+                workout.paymentUpdate,
+            ]);
+        });
+
+        // Generate the Excel file
+        workbook.xlsx.writeBuffer().then((buffer) => {
+            const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+            saveAs(blob, 'workouts.xlsx');
+        });
+    };
 
     // Function to filter rooms by search keyword
     function filterBySearch() {
@@ -42,7 +96,7 @@ export default function Home() {
     function filterByType(e) {
 
         if (e !== 'all') {
-            
+
             const tempStatus = dublicateWorkot.filter(
                 (workout) => workout.status.toLowerCase() === e.toLowerCase()
             )
@@ -55,15 +109,15 @@ export default function Home() {
 
     function filterByDate(e) {
         console.log(e)
-        
-        if(e){
+
+        if (e) {
             const tempDate = dublicateWorkot.filter(
-                (workout) => workout.dueDate.toString().includes(e.toString())                
+                (workout) => workout.dueDate.toString().includes(e.toString())
             )
 
             setWorkouts(tempDate)
 
-        }else{
+        } else {
             setWorkouts(dublicateWorkot)
         }
     }
@@ -121,18 +175,18 @@ export default function Home() {
             })
             dispatch({ type: 'DELETE_WORKOUT', payload: json })
             console.log('deleted')
-        
-        // Update the local state without refreshing the page
-        setWorkouts((prevWorkouts) => {
-            const updatedWorkouts = prevWorkouts.filter((workout) => workout._id !== id);
-            return updatedWorkouts;
-        });
-    } else {
-        console.error('Failed to delete workout');
-    }
+
+            // Update the local state without refreshing the page
+            setWorkouts((prevWorkouts) => {
+                const updatedWorkouts = prevWorkouts.filter((workout) => workout._id !== id);
+                return updatedWorkouts;
+            });
+        } else {
+            console.error('Failed to delete workout');
+        }
 
 
-        
+
     }
 
     //update
@@ -145,9 +199,9 @@ export default function Home() {
             },
             body: JSON.stringify({ status: newStatus })
         });
-    
+
         const json = await response.json();
-    
+
         if (response.ok) {
             toast.success('Status Updated Successfully', {
                 position: 'top-right',
@@ -161,7 +215,7 @@ export default function Home() {
             });
             dispatch({ type: 'UPDATE_WORKOUT', payload: json });
         }
-    
+
         // Update both local and original state
         setWorkouts((prevWorkouts) => {
             const updatedWorkouts = prevWorkouts.map((workout) =>
@@ -169,7 +223,7 @@ export default function Home() {
             );
             return updatedWorkouts;
         });
-    
+
         setDublicateWorkot((prevWorkouts) => {
             const updatedWorkouts = prevWorkouts.map((workout) =>
                 workout._id === id ? { ...workout, status: newStatus } : workout
@@ -177,10 +231,21 @@ export default function Home() {
             return updatedWorkouts;
         });
     };
+    const fileInputRef = useRef(null);
+    const handleFileImport = (event) => {
+        // Your logic to handle the imported file goes here
+        const selectedFile = event.target.files[0];
+        console.log('Selected file:', selectedFile);
+    }
+
+    const handleClick = () => {
+        // Trigger the file input click event
+        fileInputRef.current.click();
+    }
 
     return (
         <div>
-            
+
 
             <nav class="navbar navbar-expand-lg bg-body-tertiary mt-5">
                 <div class="container-fluid">
@@ -192,13 +257,29 @@ export default function Home() {
                     <div class="collapse navbar-collapse" id="navbarSupportedContent">
 
                         <ul class="navbar-nav me-auto mb-2 mb-lg-0 " >
-                            
-                        <a class="nav-link active" 
-                            aria-current="page" 
-                            style={{cursor:'pointer', fontSize:'25px'}} 
-                            onClick={() => refresh()}>
+
+                            <a class="nav-link active"
+                                aria-current="page"
+                                style={{ cursor: 'pointer', fontSize: '25px' }}
+                                onClick={() => refresh()}>
                                 <FiRefreshCcw />
-                        </a>
+                            </a>
+
+                            <div>
+                                <input
+                                    type="file"
+                                    accept=".xlsx, .xls"
+                                    onChange={handleFileImport}
+                                    ref={fileInputRef}
+                                    style={{ display: 'none' }} // Hide the file input
+                                />
+                                <button className='btn btn-outline-primary my-2 me-2' onClick={handleClick}>Import Excel File</button>
+                            </div>
+
+
+                            <button className='btn btn-outline-success my-2' onClick={generateExcelReport}>
+                                Export
+                            </button>
 
                         </ul>
 
@@ -222,7 +303,7 @@ export default function Home() {
                                 setSearchDate(e.target.value)
                                 filterByDate(e.target.value)
                             }}
-                            
+
                         />
 
 
@@ -283,14 +364,14 @@ export default function Home() {
                             <td scope="col">
                                 <div className="con-md-3 me-2">
                                     <select
-                                    className="form-control"
-                                    value={workout.status}
-                                    onChange={(e) => handleStatusUpdate(workout._id, e.target.value)}
+                                        className="form-control"
+                                        value={workout.status}
+                                        onChange={(e) => handleStatusUpdate(workout._id, e.target.value)}
                                     >
                                         <option value="pending">Pending</option>
                                         <option value="paid">Paid</option>
                                     </select>
-                                </div>                                
+                                </div>
                             </td>
 
                             <td scope="col">{workout.mobileNumber}</td>
