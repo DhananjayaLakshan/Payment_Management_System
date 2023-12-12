@@ -1,4 +1,4 @@
-import React, { useEffect, useState, Navigate , useRef } from 'react'
+import React, { useEffect, useState, Navigate, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { useWorkoutsContext } from '../hooks/useWorkoutsContext'
 import { MdDeleteForever } from "react-icons/md"
@@ -10,6 +10,8 @@ import { FiRefreshCcw } from "react-icons/fi"
 import ExcelJS from 'exceljs'
 import saveAs from 'file-saver'
 import * as xlsx from 'xlsx'
+import UpdateForm from '../components/UpdateForm'
+
 
 export default function Home() {
 
@@ -231,7 +233,7 @@ export default function Home() {
             return updatedWorkouts;
         });
     };
-    
+
     const fileInputRef = useRef(null);
 
     const handleFileImport = async (e) => {
@@ -240,9 +242,9 @@ export default function Home() {
         const excelFile = xlsx.read(data);
         const excelSheet = excelFile.Sheets[excelFile.SheetNames[0]];
         const excelJson = xlsx.utils.sheet_to_json(excelSheet);
-    
+
         console.log(excelJson);
-    
+
         for (const dataItem of excelJson) {
             console.log(dataItem);
             try {
@@ -254,7 +256,7 @@ export default function Home() {
                         'Authorization': `Bearer ${user.token}`
                     }
                 });
-    
+
                 if (response.ok) {
                     toast.success('Data inserted successfully!', {
                         position: "top-right",
@@ -266,12 +268,12 @@ export default function Home() {
                         progress: undefined,
                         theme: "light",
                     });
-    
+
                     console.log('Data inserted successfully!');
-    
+
                     // Reload the page to see the inserted data
                     window.location.reload();
-    
+
                     // Optionally, you can handle success here.
                 } else {
                     toast.warn('Failed to insert data into the database.', {
@@ -312,12 +314,14 @@ export default function Home() {
 
                         <ul class="navbar-nav me-auto mb-2 mb-lg-0 " >
 
-                            <a class="nav-link active"
+                            {/* <a class="nav-link active"
                                 aria-current="page"
                                 style={{ cursor: 'pointer', fontSize: '25px' }}
                                 onClick={() => refresh()}>
                                 <FiRefreshCcw />
-                            </a>
+                            </a> */}
+
+
 
                             <div>
                                 <input
@@ -435,7 +439,9 @@ export default function Home() {
                             <td scope="col">{workout.group}</td>
                             <td scope="col">{workout.paymentUpdate}</td>
                             <td scope="col">
-                                <button className='btn btn-outline-primary me-2 mt-2'><TiEdit style={{ fontSize: '20px' }} /></button>
+                                <Link to={`/update/${workout._id}`}>
+                                    <button className='btn btn-outline-primary me-2 mt-2'><TiEdit style={{ fontSize: '20px' }} /></button> 
+                                </Link>
                                 <button className='btn btn-danger mt-2' onClick={() => handleDelete(workout._id)}><MdDeleteForever style={{ fontSize: '20px' }} /></button>
                             </td>
 

@@ -7,6 +7,7 @@ import Navbar from './components/Navbar'
 import Login from './pages/Login'
 import Register from './pages/Register'
 import AddTask from './components/AddTask'
+import UpdateForm from './components/UpdateForm'
 
 
 
@@ -42,6 +43,8 @@ function App() {
               <Route path="/register" element={!user ? <Register /> : <Navigate to='/' />} />
 
               <Route path="/addTask" element={user ? <AddTask /> : <Navigate to='/login' />} />
+
+              <Route path="/update/:id" element={user ? <UpdateForm /> : <Navigate to='/login' />} />
 
             </Routes>
           </div>
