@@ -9,7 +9,7 @@ import { useAuthContext } from '../hooks/useAuthContext'
 import { FiRefreshCcw } from "react-icons/fi"
 import ExcelJS from 'exceljs'
 import saveAs from 'file-saver'
-import * as XLSX from 'xlsx'
+import * as xlsx from 'xlsx'
 
 export default function Home() {
 
@@ -231,12 +231,66 @@ export default function Home() {
             return updatedWorkouts;
         });
     };
+    
     const fileInputRef = useRef(null);
-    const handleFileImport = (event) => {
-        // Your logic to handle the imported file goes here
-        const selectedFile = event.target.files[0];
-        console.log('Selected file:', selectedFile);
-    }
+
+    const handleFileImport = async (e) => {
+        const file = e.target.files[0];
+        const data = await file.arrayBuffer(file);
+        const excelFile = xlsx.read(data);
+        const excelSheet = excelFile.Sheets[excelFile.SheetNames[0]];
+        const excelJson = xlsx.utils.sheet_to_json(excelSheet);
+    
+        console.log(excelJson);
+    
+        for (const dataItem of excelJson) {
+            console.log(dataItem);
+            try {
+                const response = await fetch('/api/workouts', {
+                    method: 'POST',
+                    body: JSON.stringify(dataItem),
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${user.token}`
+                    }
+                });
+    
+                if (response.ok) {
+                    toast.success('Data inserted successfully!', {
+                        position: "top-right",
+                        autoClose: 5000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "light",
+                    });
+    
+                    console.log('Data inserted successfully!');
+    
+                    // Reload the page to see the inserted data
+                    window.location.reload();
+    
+                    // Optionally, you can handle success here.
+                } else {
+                    toast.warn('Failed to insert data into the database.', {
+                        position: "top-right",
+                        autoClose: 5000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "light",
+                    });
+                    console.error('Failed to insert data into the database.');
+                }
+            } catch (error) {
+                console.error('Error during POST request:', error);
+            }
+        }
+    };
 
     const handleClick = () => {
         // Trigger the file input click event
