@@ -6,11 +6,9 @@ import { TiEdit } from "react-icons/ti"
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { useAuthContext } from '../hooks/useAuthContext'
-import { FiRefreshCcw } from "react-icons/fi"
 import ExcelJS from 'exceljs'
 import saveAs from 'file-saver'
 import * as xlsx from 'xlsx'
-import UpdateForm from '../components/UpdateForm'
 
 
 export default function Home() {
@@ -28,6 +26,29 @@ export default function Home() {
     const [type, settype] = useState('all')
     const [searchDate, setSearchDate] = useState('')
     const [data, setdata] = useState([])
+
+    const [currentPage, setCurrentPage] = useState(1)
+    const recordsPerPage = 10
+    const lastIndex = currentPage * recordsPerPage
+    const firstIndex = lastIndex - recordsPerPage
+    const records = wworkouts.slice(firstIndex, lastIndex)
+    const numberOfPages = Math.ceil(wworkouts.length/recordsPerPage)
+    const numbers = [...Array(numberOfPages+1).keys()].slice(1)
+
+    function nextPage(){
+        if (currentPage !== numberOfPages) {
+            setCurrentPage(currentPage + 1)
+        }
+
+    }
+    function prePage(){
+        if (currentPage !== 1) {
+            setCurrentPage(currentPage - 1)
+        }
+    }
+    function changeCPage(id){
+        setCurrentPage(id)
+    }
 
     // Function to generate and download the Excel report
     const generateExcelReport = () => {
@@ -406,7 +427,7 @@ export default function Home() {
                 </thead>
                 <tbody>
 
-                    {wworkouts && wworkouts.map((workout) => (
+                    {records && records.map((workout) => (
 
 
                         <tr key={workout._id}>
@@ -447,6 +468,29 @@ export default function Home() {
 
                 </tbody>
             </table>
+
+            <nav>
+                <ul className='pagination'>
+                    <li className='page-item'>
+                        <a href="#" className='page-link'
+                            onClick={prePage}
+                        >Prev</a>
+                    </li>
+                    {
+                        numbers.map((n,i)=> (
+                            <li className={`page-item ${currentPage === n ? 'active' : ''}`} key={i}>
+                                <a href="#" className='page-link'
+                                    onClick={() => changeCPage(n)}
+                                >{n}</a>
+                            </li>
+                        ))
+                    }
+
+                    <li className='page-item'>
+                        <a href="#" className='page-link' onClick={nextPage}>Next</a>
+                    </li>
+                </ul>
+            </nav>
             <ToastContainer />
         </div>
     )
