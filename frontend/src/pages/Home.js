@@ -15,23 +15,19 @@ import UpdateForm from '../components/UpdateForm'
 
 export default function Home() {
 
-    const { workouts, dispatch } = useWorkoutsContext()
-
+    //context
+    const { workouts, dispatch } = useWorkoutsContext()    
     const { user } = useAuthContext()
+
+    //fetch and setData
     const [wworkouts, setWorkouts] = useState([])
     const [dublicateWorkot, setDublicateWorkot] = useState([])
 
-    const [searchkey, setsearchkey] = useState('') // State for search input
+    //Search 
+    const [searchkey, setsearchkey] = useState('')
     const [type, settype] = useState('all')
     const [searchDate, setSearchDate] = useState('')
-
     const [data, setdata] = useState([])
-
-    const refresh = () => {
-        // Use window.location.href to navigate to the home page
-        console.log('Refresh function is called!')
-        window.location.reload()
-    }
 
     // Function to generate and download the Excel report
     const generateExcelReport = () => {
@@ -234,8 +230,8 @@ export default function Home() {
         });
     };
 
+//import excel file
     const fileInputRef = useRef(null);
-
     const handleFileImport = async (e) => {
         const file = e.target.files[0];
         const data = await file.arrayBuffer(file);
