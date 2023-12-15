@@ -14,7 +14,7 @@ import * as xlsx from 'xlsx'
 export default function Home() {
 
     //context
-    const { workouts, dispatch } = useWorkoutsContext()    
+    const { workouts, dispatch } = useWorkoutsContext()
     const { user } = useAuthContext()
 
     //fetch and setData
@@ -25,41 +25,41 @@ export default function Home() {
     const [searchkey, setsearchkey] = useState('')
     const [type, settype] = useState('all')
     const [searchDate, setSearchDate] = useState('')
-    const [data, setdata] = useState([])
 
+    //set pagination
     const [currentPage, setCurrentPage] = useState(1)
     const recordsPerPage = 10
     const lastIndex = currentPage * recordsPerPage
     const firstIndex = lastIndex - recordsPerPage
     const records = wworkouts.slice(firstIndex, lastIndex)
-    const numberOfPages = Math.ceil(wworkouts.length/recordsPerPage)
-    const numbers = [...Array(numberOfPages+1).keys()].slice(1)
+    const numberOfPages = Math.ceil(wworkouts.length / recordsPerPage)
+    const numbers = [...Array(numberOfPages + 1).keys()].slice(1)
 
-    function nextPage(){
+    // Pagination functions
+    function nextPage() {
         if (currentPage !== numberOfPages) {
             setCurrentPage(currentPage + 1)
         }
-
     }
-    function prePage(){
+    function prePage() {
         if (currentPage !== 1) {
             setCurrentPage(currentPage - 1)
         }
     }
-    function changeCPage(id){
+    function changeCPage(id) {
         setCurrentPage(id)
     }
 
     // Function to generate and download the Excel report
     const generateExcelReport = () => {
         if (wworkouts.length === 0) {
-            alert('No workout data to export.');
-            return;
+            alert('No workout data to export.')
+            return
         }
 
         // Create a new Excel workbook
-        const workbook = new ExcelJS.Workbook();
-        const worksheet = workbook.addWorksheet('Workouts');
+        const workbook = new ExcelJS.Workbook()
+        const worksheet = workbook.addWorksheet('Workouts')
 
         // Define the header row
         worksheet.addRow([
@@ -74,7 +74,7 @@ export default function Home() {
             'Duration',
             'Group',
             'Payment Update',
-        ]);
+        ])
 
         // Add data rows
         wworkouts.forEach((workout) => {
@@ -90,15 +90,15 @@ export default function Home() {
                 workout.duration,
                 workout.group,
                 workout.paymentUpdate,
-            ]);
-        });
+            ])
+        })
 
         // Generate the Excel file
         workbook.xlsx.writeBuffer().then((buffer) => {
-            const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-            saveAs(blob, 'workouts.xlsx');
-        });
-    };
+            const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
+            saveAs(blob, 'workouts.xlsx')
+        })
+    }
 
     // Function to filter rooms by search keyword
     function filterBySearch() {
@@ -112,6 +112,7 @@ export default function Home() {
         setWorkouts(tempSerch)
     }
 
+// Function to filter workouts by type
     function filterByType(e) {
 
         if (e !== 'all') {
@@ -126,6 +127,7 @@ export default function Home() {
         }
     }
 
+// Function to filter workouts by date
     function filterByDate(e) {
         console.log(e)
 
@@ -149,6 +151,8 @@ export default function Home() {
                     'Authorization': `Bearer ${user.token}`
                 }
             })
+
+            
             const json = await response.json()
 
             setWorkouts(json)
@@ -178,7 +182,6 @@ export default function Home() {
             }
         })
 
-
         const json = await response.json()
 
         if (response.ok) {
@@ -197,15 +200,12 @@ export default function Home() {
 
             // Update the local state without refreshing the page
             setWorkouts((prevWorkouts) => {
-                const updatedWorkouts = prevWorkouts.filter((workout) => workout._id !== id);
-                return updatedWorkouts;
-            });
+                const updatedWorkouts = prevWorkouts.filter((workout) => workout._id !== id)
+                return updatedWorkouts
+            })
         } else {
-            console.error('Failed to delete workout');
+            console.error('Failed to delete workout')
         }
-
-
-
     }
 
     //update
@@ -217,9 +217,9 @@ export default function Home() {
                 'Authorization': `Bearer ${user.token}`
             },
             body: JSON.stringify({ status: newStatus })
-        });
+        })
 
-        const json = await response.json();
+        const json = await response.json()
 
         if (response.ok) {
             toast.success('Status Updated Successfully', {
@@ -231,39 +231,39 @@ export default function Home() {
                 draggable: true,
                 progress: undefined,
                 theme: 'light',
-            });
-            dispatch({ type: 'UPDATE_WORKOUT', payload: json });
+            })
+            dispatch({ type: 'UPDATE_WORKOUT', payload: json })
         }
 
         // Update both local and original state
         setWorkouts((prevWorkouts) => {
             const updatedWorkouts = prevWorkouts.map((workout) =>
                 workout._id === id ? { ...workout, status: newStatus } : workout
-            );
-            return updatedWorkouts;
-        });
+            )
+            return updatedWorkouts
+        })
 
         setDublicateWorkot((prevWorkouts) => {
             const updatedWorkouts = prevWorkouts.map((workout) =>
                 workout._id === id ? { ...workout, status: newStatus } : workout
-            );
-            return updatedWorkouts;
-        });
-    };
+            )
+            return updatedWorkouts
+        })
+    }
 
-//import excel file
-    const fileInputRef = useRef(null);
-    const handleFileImport = async (e) => {
-        const file = e.target.files[0];
-        const data = await file.arrayBuffer(file);
-        const excelFile = xlsx.read(data);
-        const excelSheet = excelFile.Sheets[excelFile.SheetNames[0]];
-        const excelJson = xlsx.utils.sheet_to_json(excelSheet);
+        //import excel file
+        const fileInputRef = useRef(null)
+        const handleFileImport = async (e) => {
+        const file = e.target.files[0]
+        const data = await file.arrayBuffer(file)
+        const excelFile = xlsx.read(data)
+        const excelSheet = excelFile.Sheets[excelFile.SheetNames[0]]
+        const excelJson = xlsx.utils.sheet_to_json(excelSheet)
 
-        console.log(excelJson);
+        console.log(excelJson)
 
         for (const dataItem of excelJson) {
-            console.log(dataItem);
+            console.log(dataItem)
             try {
                 const response = await fetch('/api/workouts', {
                     method: 'POST',
@@ -272,7 +272,7 @@ export default function Home() {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${user.token}`
                     }
-                });
+                })
 
                 if (response.ok) {
                     toast.success('Data inserted successfully!', {
@@ -284,12 +284,12 @@ export default function Home() {
                         draggable: true,
                         progress: undefined,
                         theme: "light",
-                    });
+                    })
 
-                    console.log('Data inserted successfully!');
+                    console.log('Data inserted successfully!')
 
                     // Reload the page to see the inserted data
-                    window.location.reload();
+                    window.location.reload()
 
                     // Optionally, you can handle success here.
                 } else {
@@ -302,23 +302,22 @@ export default function Home() {
                         draggable: true,
                         progress: undefined,
                         theme: "light",
-                    });
-                    console.error('Failed to insert data into the database.');
+                    })
+                    console.error('Failed to insert data into the database.')
                 }
             } catch (error) {
-                console.error('Error during POST request:', error);
+                console.error('Error during POST request:', error)
             }
         }
-    };
+    }
 
     const handleClick = () => {
         // Trigger the file input click event
-        fileInputRef.current.click();
+        fileInputRef.current.click()
     }
 
     return (
         <div>
-
 
             <nav class="navbar navbar-expand-lg bg-body-tertiary mt-5">
                 <div class="container-fluid">
@@ -330,15 +329,6 @@ export default function Home() {
                     <div class="collapse navbar-collapse" id="navbarSupportedContent">
 
                         <ul class="navbar-nav me-auto mb-2 mb-lg-0 " >
-
-                            {/* <a class="nav-link active"
-                                aria-current="page"
-                                style={{ cursor: 'pointer', fontSize: '25px' }}
-                                onClick={() => refresh()}>
-                                <FiRefreshCcw />
-                            </a> */}
-
-
 
                             <div>
                                 <input
@@ -357,7 +347,6 @@ export default function Home() {
                             </button>
 
                         </ul>
-
 
                         <div className="con-md-3 me-2" value={type} onChange={(e) => filterByType(e.target.value)}>
                             <select className="form-control">
@@ -378,9 +367,7 @@ export default function Home() {
                                 setSearchDate(e.target.value)
                                 filterByDate(e.target.value)
                             }}
-
                         />
-
 
                         <input
                             class="form-control me-2"
@@ -402,7 +389,6 @@ export default function Home() {
                         </div>
 
                     </div>
-
                 </div>
             </nav>
 
@@ -457,15 +443,12 @@ export default function Home() {
                             <td scope="col">{workout.paymentUpdate}</td>
                             <td scope="col">
                                 <Link to={`/update/${workout._id}`}>
-                                    <button className='btn btn-outline-primary me-2 mt-2'><TiEdit style={{ fontSize: '20px' }} /></button> 
+                                    <button className='btn btn-outline-primary me-2 mt-2'><TiEdit style={{ fontSize: '20px' }} /></button>
                                 </Link>
                                 <button className='btn btn-danger mt-2' onClick={() => handleDelete(workout._id)}><MdDeleteForever style={{ fontSize: '20px' }} /></button>
                             </td>
-
                         </tr>
-
                     ))}
-
                 </tbody>
             </table>
 
@@ -477,7 +460,7 @@ export default function Home() {
                         >Prev</a>
                     </li>
                     {
-                        numbers.map((n,i)=> (
+                        numbers.map((n, i) => (
                             <li className={`page-item ${currentPage === n ? 'active' : ''}`} key={i}>
                                 <a href="#" className='page-link'
                                     onClick={() => changeCPage(n)}
