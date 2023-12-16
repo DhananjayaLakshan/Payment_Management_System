@@ -5,8 +5,10 @@ import 'react-toastify/dist/ReactToastify.css';
 import { useAuthContext } from '../hooks/useAuthContext';
 
 export default function AddTask() {
-
+    // Retrieve dispatch function from the workouts context
     const { dispatch } = useWorkoutsContext()
+
+    // State variables for form inputs and feedback
     const [name, setName] = useState('')
     const [email, setEmail] = useState('')
     const [adminAccount, setAdminAccount] = useState('')
@@ -20,12 +22,15 @@ export default function AddTask() {
     const [paymentUpdate, setPaymentUpdate] = useState('')
     const [error, setError] = useState(null)
     const [success, setSuccess] = useState(null)
-
+    
+    // Retrieve user information from the authentication context
     const {user} = useAuthContext()
 
+    // Event handler for form submission
     const handleLogin = async (e) => {
         e.preventDefault()
 
+         // Check if the user is logged in
         if (!user) {
             {toast.warn('You must be logged in', {
                 position: "top-right",
@@ -40,7 +45,7 @@ export default function AddTask() {
             return 
         }
 
-        // Form validation
+         // Form validation checks
         if (!name || !email || !adminAccount || !payment || !mobileNumber) {
             
             {toast.warn('All fields must be filled', {
@@ -146,7 +151,8 @@ export default function AddTask() {
             setError(null);
             setSuccess('New task added')
             console.log('New task added')
-
+            
+            // Dispatch an action to update the workouts context
             dispatch({ type: 'CREATE_WORKOUT', payload: json })
         }
     };
