@@ -35,6 +35,7 @@ export default function Home() {
     const numberOfPages = Math.ceil(wworkouts.length / recordsPerPage)
     const numbers = [...Array(numberOfPages + 1).keys()].slice(1)
 
+    //bulk select to update
     const [selectedWorkouts, setSelectedWorkouts] = useState([]);
 
 
@@ -105,7 +106,6 @@ export default function Home() {
 
     // Function to filter rooms by search keyword
     function filterBySearch() {
-
         const tempSerch = dublicateWorkot.filter((wokout) =>
             wokout.name.toLowerCase().includes(searchkey.toLowerCase()) ||
             wokout.email.toLowerCase().includes(searchkey.toLowerCase()) ||
@@ -119,11 +119,9 @@ export default function Home() {
     function filterByType(e) {
 
         if (e !== 'all') {
-
             const tempStatus = dublicateWorkot.filter(
                 (workout) => workout.status.toLowerCase() === e.toLowerCase()
             )
-
             setWorkouts(tempStatus)
         } else {
             setWorkouts(dublicateWorkot)
@@ -138,9 +136,7 @@ export default function Home() {
             const tempDate = dublicateWorkot.filter(
                 (workout) => workout.dueDate.toString().includes(e.toString())
             )
-
             setWorkouts(tempDate)
-
         } else {
             setWorkouts(dublicateWorkot)
         }
@@ -154,7 +150,6 @@ export default function Home() {
                     'Authorization': `Bearer ${user.token}`
                 }
             })
-
             
             const json = await response.json()
 
@@ -319,7 +314,9 @@ export default function Home() {
         fileInputRef.current.click()
     }
 
+    //update selected items
     const updateSelectedWorkouts = async (newStatus) => {
+
         const updatePromises = selectedWorkouts.map(async (id) => {
             const response = await fetch(`/api/workouts/${id}`, {
                 method: 'PATCH',
@@ -365,6 +362,7 @@ export default function Home() {
         setSelectedWorkouts([]);
     };
 
+    //get selected
     const toggleSelect = (workoutId) => {
         setSelectedWorkouts((prevSelected) => {
             if (prevSelected.includes(workoutId)) {
@@ -453,7 +451,7 @@ export default function Home() {
                 </div>
             </nav>
 
-            <table className="table table-striped">
+            <table className="table table-striped" >
                 <thead>
 
                     <tr>
@@ -516,6 +514,7 @@ export default function Home() {
                             <td scope="col">{workout.duration}</td>
                             <td scope="col">{workout.group}</td>
                             <td scope="col">{workout.paymentUpdate}</td>
+                            
                             <td scope="col">
                                 <Link to={`/update/${workout._id}`}>
                                     <button className='btn btn-outline-primary me-2 mt-2'><TiEdit style={{ fontSize: '20px' }} /></button>

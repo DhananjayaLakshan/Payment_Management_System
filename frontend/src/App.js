@@ -9,8 +9,6 @@ import Register from './pages/Register'
 import AddTask from './components/AddTask'
 import UpdateForm from './components/UpdateForm'
 
-
-
 function App() {
 
   const { user } = useAuthContext()
