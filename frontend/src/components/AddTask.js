@@ -151,7 +151,7 @@ export default function AddTask() {
             setError(null);
             setSuccess('New task added')
             console.log('New task added')
-            
+
             // Dispatch an action to update the workouts context
             dispatch({ type: 'CREATE_WORKOUT', payload: json })
         }
@@ -292,15 +292,10 @@ export default function AddTask() {
                     />
                 </div>
 
-
-                
-
-
                 <button type="submit" class="btn btn-primary">Submit</button>
             </fieldset>
             <ToastContainer />
         </form>
-
     )
 
 }

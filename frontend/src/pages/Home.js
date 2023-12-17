@@ -35,6 +35,9 @@ export default function Home() {
     const numberOfPages = Math.ceil(wworkouts.length / recordsPerPage)
     const numbers = [...Array(numberOfPages + 1).keys()].slice(1)
 
+    const [selectedWorkouts, setSelectedWorkouts] = useState([]);
+
+
     // Pagination functions
     function nextPage() {
         if (currentPage !== numberOfPages) {
@@ -316,6 +319,64 @@ export default function Home() {
         fileInputRef.current.click()
     }
 
+    const updateSelectedWorkouts = async (newStatus) => {
+        const updatePromises = selectedWorkouts.map(async (id) => {
+            const response = await fetch(`/api/workouts/${id}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${user.token}`
+                },
+                body: JSON.stringify({ status: newStatus })
+            });
+    
+            return response.json();
+        });
+    
+        const updatedWorkouts = await Promise.all(updatePromises);
+    
+        toast.success('Status Updated Successfully', {
+            position: 'top-right',
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: 'light',
+        });
+    
+        // Update both local and original state
+        setWorkouts((prevWorkouts) => {
+            const updated = prevWorkouts.map((workout) =>
+                selectedWorkouts.includes(workout._id) ? { ...workout, status: newStatus } : workout
+            );
+            return updated;
+        });
+    
+        setDublicateWorkot((prevWorkouts) => {
+            const updated = prevWorkouts.map((workout) =>
+                selectedWorkouts.includes(workout._id) ? { ...workout, status: newStatus } : workout
+            );
+            return updated;
+        });
+    
+        // Clear selected workouts
+        setSelectedWorkouts([]);
+    };
+
+    const toggleSelect = (workoutId) => {
+        setSelectedWorkouts((prevSelected) => {
+            if (prevSelected.includes(workoutId)) {
+                // Deselect if already selected
+                return prevSelected.filter((id) => id !== workoutId);
+            } else {
+                // Select if not already selected
+                return [...prevSelected, workoutId];
+            }
+        });
+    };
+
     return (
         <div>
 
@@ -396,6 +457,7 @@ export default function Home() {
                 <thead>
 
                     <tr>
+                        <th></th>
                         <th scope="col">Name</th>
                         <th scope="col">Email</th>
                         <th scope="col">Admin Account</th>
@@ -417,6 +479,13 @@ export default function Home() {
 
 
                         <tr key={workout._id}>
+                            <td scope="col">
+                                <input
+                                    type="checkbox"
+                                    checked={selectedWorkouts.includes(workout._id)}
+                                    onChange={() => toggleSelect(workout._id)}
+                                />
+                            </td>
                             <td scope="col">{workout.name}</td>
                             <td scope="col">{workout.email}</td>
                             <td scope="col">{workout.adminAccount}</td>
@@ -427,7 +496,13 @@ export default function Home() {
                                     <select
                                         className="form-control"
                                         value={workout.status}
-                                        onChange={(e) => handleStatusUpdate(workout._id, e.target.value)}
+                                        onChange={(e) => {
+                                            if (selectedWorkouts.length > 0) {
+                                                updateSelectedWorkouts(e.target.value);
+                                            } else {
+                                                handleStatusUpdate(workout._id, e.target.value);
+                                            }
+                                        }}
                                     >
                                         <option value="pending">Pending</option>
                                         <option value="paid">Paid</option>
