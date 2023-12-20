@@ -27,7 +27,7 @@ export default function Home() {
     const [searchDate, setSearchDate] = useState('')
 
     //updatePayment useState
-    const [paymentUpdate, setPaymentUpdate] = useState('');
+    const [paymentUpdate, setPaymentUpdate] = useState('')
 
     //set pagination
     const [currentPage, setCurrentPage] = useState(1)
@@ -208,51 +208,7 @@ export default function Home() {
             console.error('Failed to delete workout')
         }
     }
-
-    //update
-    const handleStatusUpdate = async (id, newStatus, newPaymentUpdate) => {
-        const response = await fetch(`/api/workouts/${id}`, {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${user.token}`
-            },
-            body: JSON.stringify({ status: newStatus, paymentUpdate: newPaymentUpdate })
-        });
-    
-        const json = await response.json();
-    
-        if (response.ok) {
-            toast.success('Status and Payment Update Successfully', {
-                position: 'top-right',
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: 'light',
-            });
-    
-            dispatch({ type: 'UPDATE_WORKOUT', payload: json });
-        }
-    
-        // Update both local and original state
-        setWorkouts((prevWorkouts) => {
-            const updatedWorkouts = prevWorkouts.map((workout) =>
-                workout._id === id ? { ...workout, status: newStatus, paymentUpdate: newPaymentUpdate } : workout
-            );
-            return updatedWorkouts;
-        });
-    
-        setDublicateWorkot((prevWorkouts) => {
-            const updatedWorkouts = prevWorkouts.map((workout) =>
-                workout._id === id ? { ...workout, status: newStatus, paymentUpdate: newPaymentUpdate } : workout
-            );
-            return updatedWorkouts;
-        });
-    };
-    
+        
 
         //import excel file
         const fileInputRef = useRef(null)
@@ -319,9 +275,52 @@ export default function Home() {
         fileInputRef.current.click()
     }
 
-    //update selected items
-    const updateSelectedWorkouts = async (newStatus) => {
+    //update
+    const handleStatusUpdate = async (id, newStatus, newPaymentUpdate) => {
+        const response = await fetch(`/api/workouts/${id}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${user.token}`
+            },
+            body: JSON.stringify({ status: newStatus, paymentUpdate: newPaymentUpdate })
+        });
+    
+        const json = await response.json();
+    
+        if (response.ok) {
+            toast.success('Status and Payment Update Successfully', {
+                position: 'top-right',
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: 'light',
+            });
+    
+            dispatch({ type: 'UPDATE_WORKOUT', payload: json });
+        }
+    
+        // Update both local and original state
+        setWorkouts((prevWorkouts) => {
+            const updatedWorkouts = prevWorkouts.map((workout) =>
+                workout._id === id ? { ...workout, status: newStatus, paymentUpdate: newPaymentUpdate } : workout
+            );
+            return updatedWorkouts;
+        });
+    
+        setDublicateWorkot((prevWorkouts) => {
+            const updatedWorkouts = prevWorkouts.map((workout) =>
+                workout._id === id ? { ...workout, status: newStatus, paymentUpdate: newPaymentUpdate } : workout
+            );
+            return updatedWorkouts;
+        });
+    };
 
+    //update selected items
+    const updateSelectedWorkouts = async (newStatus, newPaymentUpdate) => {
         const updatePromises = selectedWorkouts.map(async (id) => {
             const response = await fetch(`/api/workouts/${id}`, {
                 method: 'PATCH',
@@ -329,7 +328,7 @@ export default function Home() {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${user.token}`
                 },
-                body: JSON.stringify({ status: newStatus })
+                body: JSON.stringify({ status: newStatus, paymentUpdate: newPaymentUpdate })
             });
     
             return response.json();
@@ -337,7 +336,7 @@ export default function Home() {
     
         const updatedWorkouts = await Promise.all(updatePromises);
     
-        toast.success('Status Updated Successfully', {
+        toast.success('Status and Payment Update Successfully', {
             position: 'top-right',
             autoClose: 5000,
             hideProgressBar: false,
@@ -351,14 +350,14 @@ export default function Home() {
         // Update both local and original state
         setWorkouts((prevWorkouts) => {
             const updated = prevWorkouts.map((workout) =>
-                selectedWorkouts.includes(workout._id) ? { ...workout, status: newStatus } : workout
+                selectedWorkouts.includes(workout._id) ? { ...workout, status: newStatus, paymentUpdate: newPaymentUpdate } : workout
             );
             return updated;
         });
     
         setDublicateWorkot((prevWorkouts) => {
             const updated = prevWorkouts.map((workout) =>
-                selectedWorkouts.includes(workout._id) ? { ...workout, status: newStatus } : workout
+                selectedWorkouts.includes(workout._id) ? { ...workout, status: newStatus, paymentUpdate: newPaymentUpdate } : workout
             );
             return updated;
         });
@@ -492,11 +491,11 @@ export default function Home() {
                             <td scope="col">{workout.name}</td>
                             <td scope="col">{workout.email}</td>
                             <td scope="col">
-                            <input
-                                    type="text"
-                                    class="form-control"
-                                    placeholder="Admin Account"                            
-                                    value={workout.adminAccount}
+                                <input
+                                        type="text"
+                                        class="form-control"
+                                        placeholder="Admin Account"                            
+                                        value={workout.adminAccount}
                                 />
                                 
                             </td>
@@ -530,8 +529,7 @@ export default function Home() {
                             <td scope="col">
                                 <input
                                     type="date"
-                                    class="form-control"
-                                    placeholder="Admin Account"                            
+                                    class="form-control"                          
                                     value={workout.paymentUpdate}
                                     onChange={(e) => {
                                         // Update the local state when the user changes the date
