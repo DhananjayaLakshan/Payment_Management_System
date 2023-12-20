@@ -37,3 +37,7 @@ legend{
   justify-content: flex-end;
   font-weight: 500;
 }
+
+.dueDateExpired {
+  color: red;
+}

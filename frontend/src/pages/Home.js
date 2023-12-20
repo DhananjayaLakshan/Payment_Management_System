@@ -9,7 +9,7 @@ import { useAuthContext } from '../hooks/useAuthContext'
 import ExcelJS from 'exceljs'
 import saveAs from 'file-saver'
 import * as xlsx from 'xlsx'
-
+import { format } from 'date-fns'
 
 export default function Home() {
 
@@ -24,6 +24,7 @@ export default function Home() {
     //Search 
     const [searchkey, setsearchkey] = useState('')
     const [type, setType] = useState('all')
+    const [list, setList] = useState('added')
     const [searchDate, setSearchDate] = useState('')
 
     //updatePayment useState
@@ -40,6 +41,9 @@ export default function Home() {
 
     //bulk select to update
     const [selectedWorkouts, setSelectedWorkouts] = useState([]);
+
+    // Add this state variable
+    const [adminAccountUpdate, setAdminAccountUpdate] = useState('');
 
 
     // Pagination functions
@@ -107,7 +111,7 @@ export default function Home() {
         })
     }
 
-    // Function to filter rooms by search keyword
+    // Function to filter task by search keyword
     function filterBySearch() {
         const tempSerch = dublicateWorkot.filter((wokout) =>
             wokout.name.toLowerCase().includes(searchkey.toLowerCase()) ||
@@ -118,7 +122,7 @@ export default function Home() {
         setWorkouts(tempSerch)
     }
 
-// Function to filter workouts by type
+    // Function to filter workouts by type
     function filterByType(e) {
 
         if (e !== 'all') {
@@ -131,7 +135,7 @@ export default function Home() {
         }
     }
 
-// Function to filter workouts by date
+    // Function to filter workouts by date
     function filterByDate(e) {
         console.log(e)
 
@@ -145,6 +149,43 @@ export default function Home() {
         }
     }
 
+    function filterByList(value) {
+        
+        if (value === 'added'){
+            setWorkouts(dublicateWorkot);
+
+        }else if (value === 'future') {
+
+            const today = new Date();
+            const filteredWorkouts = wworkouts
+                .filter((workout) => {
+                    const workoutDueDate = new Date(workout.dueDate);
+                    // Include workouts with due dates greater than or equal to today
+                    return workoutDueDate >= today;
+                })
+                .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
+
+            setWorkouts(filteredWorkouts);    
+
+        } else if (value === 'past'){
+
+            const today = new Date();
+            const filteredWorkouts = wworkouts
+                .filter((workout) => {
+                    const workoutDueDate = new Date(workout.dueDate);
+                    // Include workouts with due dates greater than or equal to today
+                    return workoutDueDate < today;
+                })
+                .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
+
+            setWorkouts(filteredWorkouts);
+        } else{
+            setWorkouts(dublicateWorkot)
+        }
+        
+    }
+
+
     //fetch
     useEffect(() => {
         const fetchWorkouts = async () => {
@@ -153,7 +194,7 @@ export default function Home() {
                     'Authorization': `Bearer ${user.token}`
                 }
             })
-            
+
             const json = await response.json()
 
             setWorkouts(json)
@@ -208,11 +249,11 @@ export default function Home() {
             console.error('Failed to delete workout')
         }
     }
-        
 
-        //import excel file
-        const fileInputRef = useRef(null)
-        const handleFileImport = async (e) => {
+
+    //import excel file
+    const fileInputRef = useRef(null)
+    const handleFileImport = async (e) => {
         const file = e.target.files[0]
         const data = await file.arrayBuffer(file)
         const excelFile = xlsx.read(data)
@@ -285,9 +326,9 @@ export default function Home() {
             },
             body: JSON.stringify({ status: newStatus, paymentUpdate: newPaymentUpdate })
         });
-    
+
         const json = await response.json();
-    
+
         if (response.ok) {
             toast.success('Status and Payment Update Successfully', {
                 position: 'top-right',
@@ -299,10 +340,10 @@ export default function Home() {
                 progress: undefined,
                 theme: 'light',
             });
-    
+
             dispatch({ type: 'UPDATE_WORKOUT', payload: json });
         }
-    
+
         // Update both local and original state
         setWorkouts((prevWorkouts) => {
             const updatedWorkouts = prevWorkouts.map((workout) =>
@@ -310,7 +351,7 @@ export default function Home() {
             );
             return updatedWorkouts;
         });
-    
+
         setDublicateWorkot((prevWorkouts) => {
             const updatedWorkouts = prevWorkouts.map((workout) =>
                 workout._id === id ? { ...workout, status: newStatus, paymentUpdate: newPaymentUpdate } : workout
@@ -330,12 +371,12 @@ export default function Home() {
                 },
                 body: JSON.stringify({ status: newStatus, paymentUpdate: newPaymentUpdate })
             });
-    
+
             return response.json();
         });
-    
+
         const updatedWorkouts = await Promise.all(updatePromises);
-    
+
         toast.success('Status and Payment Update Successfully', {
             position: 'top-right',
             autoClose: 5000,
@@ -346,7 +387,7 @@ export default function Home() {
             progress: undefined,
             theme: 'light',
         });
-    
+
         // Update both local and original state
         setWorkouts((prevWorkouts) => {
             const updated = prevWorkouts.map((workout) =>
@@ -354,14 +395,14 @@ export default function Home() {
             );
             return updated;
         });
-    
+
         setDublicateWorkot((prevWorkouts) => {
             const updated = prevWorkouts.map((workout) =>
                 selectedWorkouts.includes(workout._id) ? { ...workout, status: newStatus, paymentUpdate: newPaymentUpdate } : workout
             );
             return updated;
         });
-    
+
         // Clear selected workouts
         setSelectedWorkouts([]);
     };
@@ -378,6 +419,13 @@ export default function Home() {
             }
         });
     };
+
+    // Helper function to check if the due date is expired
+    function isDueDateExpired(dueDate) {
+        const today = new Date();
+        const workoutDueDate = new Date(dueDate);
+        return workoutDueDate < today;
+    }
 
     return (
         <div>
@@ -410,6 +458,14 @@ export default function Home() {
                             </button>
 
                         </ul>
+
+                        <div className="con-md-3 me-2" value={list} onChange={(e) => filterByList(e.target.value)}>
+                            <select className="form-control">
+                                <option value="added">Added</option>
+                                <option value="future">Future</option>
+                                <option value="past">Past</option>
+                            </select>
+                        </div>
 
                         <div className="con-md-3 me-2" value={type} onChange={(e) => filterByType(e.target.value)}>
                             <select className="form-control">
@@ -492,12 +548,12 @@ export default function Home() {
                             <td scope="col">{workout.email}</td>
                             <td scope="col">
                                 <input
-                                        type="text"
-                                        class="form-control"
-                                        placeholder="Admin Account"                            
-                                        value={workout.adminAccount}
+                                    type="text"
+                                    class="form-control"
+                                    placeholder="Admin Account"
+                                    value={workout.adminAccount}
                                 />
-                                
+
                             </td>
                             <td scope="col">{workout.payment}</td>
 
@@ -522,18 +578,20 @@ export default function Home() {
 
                             <td scope="col">{workout.mobileNumber}</td>
                             <td scope="col">{workout.startDate}</td>
-                            <td scope="col">{workout.dueDate}</td>
+                            <td scope="col" >                                
+                                <span className={isDueDateExpired(workout.dueDate) ? 'dueDateExpired' : ''}>{workout.dueDate}</span>
+                            </td>
                             <td scope="col">{workout.duration}</td>
                             <td scope="col">{workout.group}</td>
 
                             <td scope="col">
                                 <input
                                     type="date"
-                                    class="form-control"                          
+                                    class="form-control"
                                     value={workout.paymentUpdate}
                                     onChange={(e) => {
                                         // Update the local state when the user changes the date
-                                        setPaymentUpdate(e.target.value);                            
+                                        setPaymentUpdate(e.target.value);
                                         // Call the handleStatusUpdate function with the new status and paymentUpdate
                                         if (selectedWorkouts.length > 0) {
                                             updateSelectedWorkouts(workout._id, e.target.value);
@@ -543,7 +601,7 @@ export default function Home() {
                                     }}
                                 />
                             </td>
-                            
+
                             <td scope="col">
                                 <Link to={`/update/${workout._id}`}>
                                     <button className='btn btn-outline-primary me-2 mt-2'><TiEdit style={{ fontSize: '20px' }} /></button>
