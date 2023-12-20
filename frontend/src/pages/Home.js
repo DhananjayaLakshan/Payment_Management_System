@@ -23,8 +23,11 @@ export default function Home() {
 
     //Search 
     const [searchkey, setsearchkey] = useState('')
-    const [type, settype] = useState('all')
+    const [type, setType] = useState('all')
     const [searchDate, setSearchDate] = useState('')
+
+    //updatePayment useState
+    const [paymentUpdate, setPaymentUpdate] = useState('');
 
     //set pagination
     const [currentPage, setCurrentPage] = useState(1)
@@ -207,20 +210,20 @@ export default function Home() {
     }
 
     //update
-    const handleStatusUpdate = async (id, newStatus) => {
+    const handleStatusUpdate = async (id, newStatus, newPaymentUpdate) => {
         const response = await fetch(`/api/workouts/${id}`, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${user.token}`
             },
-            body: JSON.stringify({ status: newStatus })
-        })
-
-        const json = await response.json()
-
+            body: JSON.stringify({ status: newStatus, paymentUpdate: newPaymentUpdate })
+        });
+    
+        const json = await response.json();
+    
         if (response.ok) {
-            toast.success('Status Updated Successfully', {
+            toast.success('Status and Payment Update Successfully', {
                 position: 'top-right',
                 autoClose: 5000,
                 hideProgressBar: false,
@@ -229,25 +232,27 @@ export default function Home() {
                 draggable: true,
                 progress: undefined,
                 theme: 'light',
-            })
-            dispatch({ type: 'UPDATE_WORKOUT', payload: json })
+            });
+    
+            dispatch({ type: 'UPDATE_WORKOUT', payload: json });
         }
-
+    
         // Update both local and original state
         setWorkouts((prevWorkouts) => {
             const updatedWorkouts = prevWorkouts.map((workout) =>
-                workout._id === id ? { ...workout, status: newStatus } : workout
-            )
-            return updatedWorkouts
-        })
-
+                workout._id === id ? { ...workout, status: newStatus, paymentUpdate: newPaymentUpdate } : workout
+            );
+            return updatedWorkouts;
+        });
+    
         setDublicateWorkot((prevWorkouts) => {
             const updatedWorkouts = prevWorkouts.map((workout) =>
-                workout._id === id ? { ...workout, status: newStatus } : workout
-            )
-            return updatedWorkouts
-        })
-    }
+                workout._id === id ? { ...workout, status: newStatus, paymentUpdate: newPaymentUpdate } : workout
+            );
+            return updatedWorkouts;
+        });
+    };
+    
 
         //import excel file
         const fileInputRef = useRef(null)
@@ -486,7 +491,15 @@ export default function Home() {
                             </td>
                             <td scope="col">{workout.name}</td>
                             <td scope="col">{workout.email}</td>
-                            <td scope="col">{workout.adminAccount}</td>
+                            <td scope="col">
+                            <input
+                                    type="text"
+                                    class="form-control"
+                                    placeholder="Admin Account"                            
+                                    value={workout.adminAccount}
+                                />
+                                
+                            </td>
                             <td scope="col">{workout.payment}</td>
 
                             <td scope="col">
@@ -513,7 +526,25 @@ export default function Home() {
                             <td scope="col">{workout.dueDate}</td>
                             <td scope="col">{workout.duration}</td>
                             <td scope="col">{workout.group}</td>
-                            <td scope="col">{workout.paymentUpdate}</td>
+
+                            <td scope="col">
+                                <input
+                                    type="date"
+                                    class="form-control"
+                                    placeholder="Admin Account"                            
+                                    value={workout.paymentUpdate}
+                                    onChange={(e) => {
+                                        // Update the local state when the user changes the date
+                                        setPaymentUpdate(e.target.value);                            
+                                        // Call the handleStatusUpdate function with the new status and paymentUpdate
+                                        if (selectedWorkouts.length > 0) {
+                                            updateSelectedWorkouts(workout._id, e.target.value);
+                                        } else {
+                                            handleStatusUpdate(workout._id, workout.status, e.target.value);
+                                        }
+                                    }}
+                                />
+                            </td>
                             
                             <td scope="col">
                                 <Link to={`/update/${workout._id}`}>
