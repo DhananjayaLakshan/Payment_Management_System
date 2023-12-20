@@ -578,9 +578,11 @@ export default function Home() {
 
                             <td scope="col">{workout.mobileNumber}</td>
                             <td scope="col">{workout.startDate}</td>
-                            <td scope="col" >                                
+
+                            <td scope="col">                                
                                 <span className={isDueDateExpired(workout.dueDate) ? 'dueDateExpired' : ''}>{workout.dueDate}</span>
                             </td>
+                            
                             <td scope="col">{workout.duration}</td>
                             <td scope="col">{workout.group}</td>
 
