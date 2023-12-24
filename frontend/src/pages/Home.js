@@ -30,22 +30,25 @@ export default function Home() {
     //updatePayment useState
     const [paymentUpdate, setPaymentUpdate] = useState('')
 
+    
+    //bulk select to update
+    const [selectedWorkouts, setSelectedWorkouts] = useState([]);
+    
+    // Add this state variable
+    const [adminAccountUpdate, setAdminAccountUpdate] = useState('');
+    
+    //set View Record Count in front end
+    const[viewRecordCount,setViewRecordCount] = useState(10)
+    
     //set pagination
     const [currentPage, setCurrentPage] = useState(1)
-    const recordsPerPage = 10
+    const recordsPerPage = viewRecordCount
     const lastIndex = currentPage * recordsPerPage
     const firstIndex = lastIndex - recordsPerPage
     const records = wworkouts.slice(firstIndex, lastIndex)
     const numberOfPages = Math.ceil(wworkouts.length / recordsPerPage)
     const numbers = [...Array(numberOfPages + 1).keys()].slice(1)
-
-    //bulk select to update
-    const [selectedWorkouts, setSelectedWorkouts] = useState([]);
-
-    // Add this state variable
-    const [adminAccountUpdate, setAdminAccountUpdate] = useState('');
-
-
+    
     // Pagination functions
     function nextPage() {
         if (currentPage !== numberOfPages) {
@@ -458,6 +461,15 @@ export default function Home() {
                             </button>
 
                         </ul>
+
+                        <div className="con-md-3 me-2" value={viewRecordCount} onChange={(e) => setViewRecordCount(e.target.value)}>
+                            <select className="form-control">
+                                <option value="10">10</option>
+                                <option value="20">20</option>
+                                <option value="50">50</option>
+                                <option value="100">100</option>
+                            </select>
+                        </div>
 
                         <div className="con-md-3 me-2" value={list} onChange={(e) => filterByList(e.target.value)}>
                             <select className="form-control">
