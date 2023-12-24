@@ -63,55 +63,7 @@ export default function Home() {
         setCurrentPage(id)
     }
 
-    // Function to generate and download the Excel report
-    const generateExcelReport = () => {
-        if (wworkouts.length === 0) {
-            alert('No workout data to export.')
-            return
-        }
-
-        // Create a new Excel workbook
-        const workbook = new ExcelJS.Workbook()
-        const worksheet = workbook.addWorksheet('Workouts')
-
-        // Define the header row
-        worksheet.addRow([
-            'Name',
-            'Email',
-            'Admin Account',
-            'Payment',
-            'Status',
-            'Mobile Number',
-            'Starting Date',
-            'Due Date',
-            'Duration',
-            'Group',
-            'Payment Update',
-        ])
-
-        // Add data rows
-        wworkouts.forEach((workout) => {
-            worksheet.addRow([
-                workout.name,
-                workout.email,
-                workout.adminAccount,
-                workout.payment,
-                workout.status,
-                workout.mobileNumber,
-                workout.startDate,
-                workout.dueDate,
-                workout.duration,
-                workout.group,
-                workout.paymentUpdate,
-            ])
-        })
-
-        // Generate the Excel file
-        workbook.xlsx.writeBuffer().then((buffer) => {
-            const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
-            saveAs(blob, 'workouts.xlsx')
-        })
-    }
+    
 
     // Function to filter task by search keyword
     function filterBySearch() {
@@ -311,6 +263,58 @@ export default function Home() {
                 console.error('Error during POST request:', error)
             }
         }
+    }
+
+    // export Excel File
+    const generateExcelReport = () => {
+        if (wworkouts.length === 0) {
+            alert('No workout data to export.')
+            return
+        }
+
+        // Create a new Excel workbook
+        const workbook = new ExcelJS.Workbook()
+        const worksheet = workbook.addWorksheet('Workouts')
+
+        // Define the header row
+        worksheet.addRow([
+            'Name',
+            'Email',
+            'Admin Account',
+            'Payment',
+            'Status',
+            'Mobile Number',
+            'Starting Date',
+            'Due Date',
+            'Duration',
+            'Group',
+            'Payment Update',
+            'Category'
+        ])
+
+        // Add data rows
+        wworkouts.forEach((workout) => {
+            worksheet.addRow([
+                workout.name,
+                workout.email,
+                workout.adminAccount,
+                workout.payment,
+                workout.status,
+                workout.mobileNumber,
+                workout.startDate,
+                workout.dueDate,
+                workout.duration,
+                workout.group,
+                workout.paymentUpdate,
+                workout.category
+            ])
+        })
+
+        // Generate the Excel file
+        workbook.xlsx.writeBuffer().then((buffer) => {
+            const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
+            saveAs(blob, 'workouts.xlsx')
+        })
     }
 
     const handleClick = () => {
