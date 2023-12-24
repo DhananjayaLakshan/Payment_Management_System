@@ -20,75 +20,84 @@ export default function AddTask() {
     const [duration, setDuration] = useState('')
     const [group, setGroup] = useState('')
     const [paymentUpdate, setPaymentUpdate] = useState('')
+    const [category , setCategory] = useState('')
     const [error, setError] = useState(null)
     const [success, setSuccess] = useState(null)
-    
+
     // Retrieve user information from the authentication context
-    const {user} = useAuthContext()
+    const { user } = useAuthContext()
 
     // Event handler for form submission
     const handleLogin = async (e) => {
         e.preventDefault()
 
-         // Check if the user is logged in
+        // Check if the user is logged in
         if (!user) {
-            {toast.warn('You must be logged in', {
-                position: "top-right",
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "light",
-            })}
-            return 
+            {
+                toast.warn('You must be logged in', {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                })
+            }
+            return
         }
 
-         // Form validation checks
-        if (!name || !email || !adminAccount || !payment || !mobileNumber) {
-            
-            {toast.warn('All fields must be filled', {
-                position: "top-right",
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "light",
-            })}
+        // Form validation checks
+        if (!name || !email || !adminAccount || !payment || !mobileNumber || !category) {
+
+            {
+                toast.warn('All fields must be filled', {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                })
+            }
             return;
         }
 
         if (isNaN(payment) || Number(payment) <= 0) {
 
-            {toast.warn('Payment must be a valid number greater than 0' , {
-                position: "top-right",
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "light",
-            })}
+            {
+                toast.warn('Payment must be a valid number greater than 0', {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                })
+            }
 
             return;
         }
 
         if (!/^\d{10}$/.test(mobileNumber)) {
-            
-            {toast.warn('Mobile Number must be a 10-digit number' , {
-                position: "top-right",
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "light",
-            })}
+
+            {
+                toast.warn('Mobile Number must be a 10-digit number', {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                })
+            }
             return;
         }
 
@@ -104,7 +113,8 @@ export default function AddTask() {
             dueDate,
             duration,
             group,
-            paymentUpdate
+            paymentUpdate,
+            category
         };
 
         console.log(tast); // Corrected variable name
@@ -114,7 +124,7 @@ export default function AddTask() {
             body: JSON.stringify(tast),
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization':`Bearer ${user.token}`
+                'Authorization': `Bearer ${user.token}`
             }
         });
 
@@ -147,6 +157,7 @@ export default function AddTask() {
             setDuration('');
             setGroup('');
             setPaymentUpdate('');
+            setCategory('');
 
             setError(null);
             setSuccess('New task added')
@@ -219,6 +230,31 @@ export default function AddTask() {
                         >
                             <option value="pending" selected>Pending</option>
                             <option value="paid">Paid</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row mb-2">
+                    <div class="col">
+                        <input
+                            type="text"
+                            class="form-control"
+                            placeholder="Admin Account"
+                            onChange={(e) => setCategory(e.target.value)}
+                            value={category}
+                        />
+                    </div>
+
+                    <div class="col">
+                        <select
+                            class="form-select" i
+                            id="inputGroupSelect01"
+                            onChange={(e) => setCategory(e.target.value)}
+                            value={category}
+                        >
+                            <option value="" selected>Select Category</option>
+                            <option value="100 Participants">100 Participants</option>
+                            <option value="500 Participants">500 Participants</option>
                         </select>
                     </div>
                 </div>
