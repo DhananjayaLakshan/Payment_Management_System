@@ -15,6 +15,7 @@ const workoutSchema = new Schema({
     duration:{type:String,require: true},
     group:{type:String,require: true},
     paymentUpdate:{type:String,require: true},
+    category:{type:String,require: true},
 
 }, {timestamps: true})
 

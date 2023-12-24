@@ -43,13 +43,13 @@ const getSingleWorkout = async (req, res) => {
 const createWorkout = async (req, res) => {
 
     const userId = req.user._id
-    const { name, email, adminAccount, payment, status, mobileNumber, startDate, dueDate, duration, group, paymentUpdate  } = req.body
-    const data = {name, email, adminAccount, payment, status, mobileNumber, startDate, dueDate, duration, group, paymentUpdate}
+    const { name, email, adminAccount, payment, status, mobileNumber, startDate, dueDate, duration, group, paymentUpdate, category  } = req.body
+    const data = {name, email, adminAccount, payment, status, mobileNumber, startDate, dueDate, duration, group, paymentUpdate, category}
     console.log(data);
     
     //add doc to db
     try {
-        const workout = await Workout.create({ userId, name, email, adminAccount, payment, status, mobileNumber, startDate, dueDate, duration, group, paymentUpdate  })
+        const workout = await Workout.create({ userId, name, email, adminAccount, payment, status, mobileNumber, startDate, dueDate, duration, group, paymentUpdate, category  })
         res.status(200).json(workout)
 
     } catch (error) {

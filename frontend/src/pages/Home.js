@@ -29,7 +29,6 @@ export default function Home() {
 
     //updatePayment useState
     const [paymentUpdate, setPaymentUpdate] = useState('')
-
     
     //bulk select to update
     const [selectedWorkouts, setSelectedWorkouts] = useState([]);
