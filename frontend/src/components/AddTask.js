@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useWorkoutsContext } from '../hooks/useWorkoutsContext'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -26,6 +26,34 @@ export default function AddTask() {
 
     // Retrieve user information from the authentication context
     const { user } = useAuthContext()
+
+    //fetch Data
+    const [workouts, setWorkouts] = useState([])
+
+    //fetch
+    useEffect(() => {
+        const fetchWorkouts = async () => {
+            const response = await fetch('/api/workouts', {
+                headers: {
+                    'Authorization': `Bearer ${user.token}`
+                }
+            })
+
+            const json = await response.json()
+
+            setWorkouts(json)
+            
+
+            if (response.ok) {
+                dispatch({ type: 'SET_WORKOUT', payload: json })
+            }
+        }
+
+        if (user) {
+            fetchWorkouts()
+        }
+
+    }, [dispatch, user])
 
     // Event handler for form submission
     const handleLogin = async (e) => {
@@ -168,6 +196,11 @@ export default function AddTask() {
         }
     };
 
+    // Define a function to get unique categories
+    const getUniqueCategories = () => {
+        const uniqueCategories = [...new Set(workouts.map((workout) => workout.category))];
+        return uniqueCategories;
+    };
 
     return (
         <form className='bg-white addTask ' onSubmit={handleLogin}>
@@ -239,7 +272,7 @@ export default function AddTask() {
                         <input
                             type="text"
                             class="form-control"
-                            placeholder="Admin Account"
+                            placeholder="add new category"
                             onChange={(e) => setCategory(e.target.value)}
                             value={category}
                         />
@@ -253,8 +286,10 @@ export default function AddTask() {
                             value={category}
                         >
                             <option value="" selected>Select Category</option>
-                            <option value="100 Participants">100 Participants</option>
-                            <option value="500 Participants">500 Participants</option>
+
+                            {getUniqueCategories().map((uniqueCategory) => (
+                                <option value={uniqueCategory}>{uniqueCategory}</option>
+                            ))}
                         </select>
                     </div>
                 </div>
