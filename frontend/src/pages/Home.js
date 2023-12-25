@@ -108,7 +108,7 @@ export default function Home() {
             setWorkouts(dublicateWorkot)
         }
     }
-
+    // Function to filter workouts by date range
     function filterByDateRange(e) {
         console.log(`startDate: ${startDate}`);
         console.log(`endDate: ${e}`);
@@ -129,6 +129,7 @@ export default function Home() {
 
 
 
+    //filter by added/past/future by due date
     function filterByList(value) {
         if (value === 'added') {
             setWorkouts(dublicateWorkot);
@@ -374,7 +375,7 @@ export default function Home() {
         const json = await response.json();
 
         if (response.ok) {
-            toast.success('Status and Payment Update Successfully', {
+            toast.success('Updated Successfully', {
                 position: 'top-right',
                 autoClose: 5000,
                 hideProgressBar: false,
@@ -434,7 +435,7 @@ export default function Home() {
 
         const updatedWorkouts = await Promise.all(updatePromises);
 
-        toast.success('Status and Payment Update Successfully', {
+        toast.success('Updated Successfully', {
             position: 'top-right',
             autoClose: 5000,
             hideProgressBar: false,
