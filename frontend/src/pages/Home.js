@@ -25,7 +25,8 @@ export default function Home() {
     const [type, setType] = useState('all')
     const [list, setList] = useState('added')
     const [searchDate, setSearchDate] = useState('')
-    const [categories, setCategories] = useState('all')
+    const [selectedCategory, setSelectedCategory] = useState('all')
+    const [filterCategory, setFilterCategory] = useState([])
 
     //updatePayment useState
     const [paymentUpdate, setPaymentUpdate] = useState('')
@@ -102,49 +103,49 @@ export default function Home() {
     }
 
     function filterByList(value) {
-
         if (value === 'added') {
             setWorkouts(dublicateWorkot);
-
-        } else if (value === 'future') {
-
-            const today = new Date();
-            const filteredWorkouts = wworkouts
-                .filter((workout) => {
-                    const workoutDueDate = new Date(workout.dueDate);
-                    // Include workouts with due dates greater than or equal to today
-                    return workoutDueDate >= today;
-                })
-                .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
-
-            setWorkouts(filteredWorkouts);
-
-        } else if (value === 'past') {
-
-            const today = new Date();
-            const filteredWorkouts = wworkouts
-                .filter((workout) => {
-                    const workoutDueDate = new Date(workout.dueDate);
-                    // Include workouts with due dates greater than or equal to today
-                    return workoutDueDate < today;
-                })
-                .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
-
-            setWorkouts(filteredWorkouts);
         } else {
-            setWorkouts(dublicateWorkot)
+            const today = new Date();
+            const filteredWorkouts = dublicateWorkot
+                .filter((workout) => {
+                    const workoutDueDate = new Date(workout.dueDate);
+    
+                    if (value === 'future') {
+                        // Include workouts with due dates greater than or equal to today
+                        return workoutDueDate >= today;
+                    } else if (value === 'past') {
+                        // Include workouts with due dates less than today
+                        return workoutDueDate < today;
+                    }
+    
+                    // Handle other cases if needed
+    
+                    return true; // Default case
+                })
+                .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
+    
+            setWorkouts(filteredWorkouts);
         }
-
     }
 
-        // Define a function to get unique categories
-        const getUniqueCategories = () => {
-            const uniqueCategories = [...new Set(wworkouts.map((workout) => workout.category))];
-            return uniqueCategories;
-        };
+    // Define a function to get unique categories
+    const getUniqueCategories = () => {
+        const uniqueCategories = [...new Set(filterCategory.map((workout) => workout.category))];
+        return uniqueCategories;
+    }
 
-    function filterByCategories(){
-        console.log("filterByCategories");
+    // Update the filterByCategories function to set the selected category
+    function filterByCategories(e) {
+        const selectedCategoryValue = e.target.value;
+
+        const filteredWorkouts = dublicateWorkot.filter((workout) => {
+            return selectedCategoryValue === 'all' || workout.category === selectedCategoryValue;
+        });
+
+        setWorkouts(filteredWorkouts);
+        setSelectedCategory(selectedCategoryValue);
+        
     }
 
     //fetch
@@ -160,6 +161,7 @@ export default function Home() {
 
             setWorkouts(json)
             setDublicateWorkot(json)
+            setFilterCategory(json)
 
             if (response.ok) {
                 dispatch({ type: 'SET_WORKOUT', payload: json })
@@ -470,7 +472,7 @@ export default function Home() {
                                 Export
                             </button>
 
-                            <div className="con-md-3 ms-2 mt-2" value={categories} onChange={(e) => filterByCategories(e.target.value)}>
+                            <div className="con-md-3 ms-2 mt-2" value={selectedCategory} onChange={filterByCategories}>
                                 <select className="form-control">
                                     <option value="all" selected>All</option>
                                     {getUniqueCategories().map((uniqueCategory) => (
