@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "@syncfusion/ej2-react-calendars": "^24.1.41"
+  }
+}

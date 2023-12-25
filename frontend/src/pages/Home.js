@@ -9,6 +9,7 @@ import { useAuthContext } from '../hooks/useAuthContext'
 import ExcelJS from 'exceljs'
 import saveAs from 'file-saver'
 import * as xlsx from 'xlsx'
+import moment from 'moment';
 
 export default function Home() {
 
@@ -27,6 +28,13 @@ export default function Home() {
     const [searchDate, setSearchDate] = useState('')
     const [selectedCategory, setSelectedCategory] = useState('all')
     const [filterCategory, setFilterCategory] = useState([])
+    const [startDate, setStartDate] = useState('')
+    const [endDate, setEndDate] = useState('')
+
+    // console.log(`startDate: ${startDate}`);
+    // console.log(`endDate: ${endDate}`);
+
+
 
     //updatePayment useState
     const [paymentUpdate, setPaymentUpdate] = useState('')
@@ -36,6 +44,8 @@ export default function Home() {
 
     //set View Record Count in front end
     const [viewRecordCount, setViewRecordCount] = useState(10)
+
+
 
     //set pagination
     const [currentPage, setCurrentPage] = useState(1)
@@ -99,6 +109,26 @@ export default function Home() {
         }
     }
 
+    function filterByDateRange(e) {
+        console.log(`startDate: ${startDate}`);
+        console.log(`endDate: ${e}`);
+
+        // Function to filter workouts by date range
+        if (e) {
+            
+        const tempDate = dublicateWorkot.filter((workout) => {
+            const workoutDate = new Date(workout.dueDate);
+            return workoutDate >= new Date(startDate) && workoutDate <= new Date(endDate);
+        });
+        setWorkouts(tempDate);
+        }else {
+            setWorkouts(dublicateWorkot)
+        }
+    
+    }
+
+
+
     function filterByList(value) {
         if (value === 'added') {
             setWorkouts(dublicateWorkot);
@@ -107,7 +137,7 @@ export default function Home() {
             const filteredWorkouts = dublicateWorkot
                 .filter((workout) => {
                     const workoutDueDate = new Date(workout.dueDate);
-    
+
                     if (value === 'future') {
                         // Include workouts with due dates greater than or equal to today
                         return workoutDueDate >= today;
@@ -115,13 +145,13 @@ export default function Home() {
                         // Include workouts with due dates less than today
                         return workoutDueDate < today;
                     }
-    
+
                     // Handle other cases if needed
-    
+
                     return true; // Default case
                 })
                 .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
-    
+
             setWorkouts(filteredWorkouts);
         }
     }
@@ -143,7 +173,7 @@ export default function Home() {
 
         setWorkouts(filteredWorkouts);
         setSelectedCategory(selectedCategoryValue);
-        
+
     }
 
 
@@ -482,6 +512,29 @@ export default function Home() {
                                 </select>
                             </div>
 
+                            <div className="con-md-3 ms-2 mt-2">
+                                <input
+                                    class="form-control me-2"
+                                    style={{ display: 'flex', width: '200px' }}
+                                    type="date"
+                                    onChange={(e) => {
+                                        // const formattedDate = moment(e.target.value).format('DD-MM-YYYY');
+                                        setStartDate(e.target.value)
+                                    }}
+                                />
+                            </div>
+                            <div className="con-md-3 ms-2 mt-2">
+                                <input
+                                    class="form-control me-2"
+                                    style={{ display: 'flex', width: '200px' }}
+                                    type="date"
+                                    onChange={(e) => {
+                                        // const formattedDate = moment(e.target.value).format('DD-MM-YYYY');
+                                        setEndDate(e.target.value)
+                                        filterByDateRange(e.target.value)
+                                    }}
+                                />
+                            </div>
                         </ul>
 
                         <div className="con-md-3 me-2" value={viewRecordCount} onChange={(e) => setViewRecordCount(e.target.value)}>
