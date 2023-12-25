@@ -26,10 +26,10 @@ function App() {
         <div className='row'>
           <Navbar Toggle={Toggle} />
 
-          {toggle && <div className="col-2 bg-white sideBar">
+          {/* {toggle && <div className="col-2 bg-white sideBar">
             <Sidebar />
           </div>
-          }
+          } */}
 
           <div className="pages col">
             <Routes>

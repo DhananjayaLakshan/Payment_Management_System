@@ -9,7 +9,6 @@ import { useAuthContext } from '../hooks/useAuthContext'
 import ExcelJS from 'exceljs'
 import saveAs from 'file-saver'
 import * as xlsx from 'xlsx'
-import { format } from 'date-fns'
 
 export default function Home() {
 
@@ -26,19 +25,20 @@ export default function Home() {
     const [type, setType] = useState('all')
     const [list, setList] = useState('added')
     const [searchDate, setSearchDate] = useState('')
+    const [categories, setCategories] = useState('all')
 
     //updatePayment useState
     const [paymentUpdate, setPaymentUpdate] = useState('')
-    
+
     //bulk select to update
     const [selectedWorkouts, setSelectedWorkouts] = useState([]);
-    
+
     // Add this state variable
     const [adminAccountUpdate, setAdminAccountUpdate] = useState('');
-    
+
     //set View Record Count in front end
-    const[viewRecordCount,setViewRecordCount] = useState(10)
-    
+    const [viewRecordCount, setViewRecordCount] = useState(10)
+
     //set pagination
     const [currentPage, setCurrentPage] = useState(1)
     const recordsPerPage = viewRecordCount
@@ -47,7 +47,7 @@ export default function Home() {
     const records = wworkouts.slice(firstIndex, lastIndex)
     const numberOfPages = Math.ceil(wworkouts.length / recordsPerPage)
     const numbers = [...Array(numberOfPages + 1).keys()].slice(1)
-    
+
     // Pagination functions
     function nextPage() {
         if (currentPage !== numberOfPages) {
@@ -62,8 +62,6 @@ export default function Home() {
     function changeCPage(id) {
         setCurrentPage(id)
     }
-
-    
 
     // Function to filter task by search keyword
     function filterBySearch() {
@@ -104,11 +102,11 @@ export default function Home() {
     }
 
     function filterByList(value) {
-        
-        if (value === 'added'){
+
+        if (value === 'added') {
             setWorkouts(dublicateWorkot);
 
-        }else if (value === 'future') {
+        } else if (value === 'future') {
 
             const today = new Date();
             const filteredWorkouts = wworkouts
@@ -119,9 +117,9 @@ export default function Home() {
                 })
                 .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
 
-            setWorkouts(filteredWorkouts);    
+            setWorkouts(filteredWorkouts);
 
-        } else if (value === 'past'){
+        } else if (value === 'past') {
 
             const today = new Date();
             const filteredWorkouts = wworkouts
@@ -133,12 +131,21 @@ export default function Home() {
                 .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
 
             setWorkouts(filteredWorkouts);
-        } else{
+        } else {
             setWorkouts(dublicateWorkot)
         }
-        
+
     }
 
+        // Define a function to get unique categories
+        const getUniqueCategories = () => {
+            const uniqueCategories = [...new Set(wworkouts.map((workout) => workout.category))];
+            return uniqueCategories;
+        };
+
+    function filterByCategories(){
+        console.log("filterByCategories");
+    }
 
     //fetch
     useEffect(() => {
@@ -463,6 +470,15 @@ export default function Home() {
                                 Export
                             </button>
 
+                            <div className="con-md-3 ms-2 mt-2" value={categories} onChange={(e) => filterByCategories(e.target.value)}>
+                                <select className="form-control">
+                                    <option value="all" selected>All</option>
+                                    {getUniqueCategories().map((uniqueCategory) => (
+                                        <option value={uniqueCategory}>{uniqueCategory}</option>
+                                    ))}
+                                </select>
+                            </div>
+
                         </ul>
 
                         <div className="con-md-3 me-2" value={viewRecordCount} onChange={(e) => setViewRecordCount(e.target.value)}>
@@ -594,10 +610,10 @@ export default function Home() {
                             <td scope="col">{workout.mobileNumber}</td>
                             <td scope="col">{workout.startDate}</td>
 
-                            <td scope="col">                                
+                            <td scope="col">
                                 <span className={isDueDateExpired(workout.dueDate) ? 'dueDateExpired' : ''}>{workout.dueDate}</span>
                             </td>
-                            
+
                             <td scope="col">{workout.duration}</td>
                             <td scope="col">{workout.group}</td>
 
