@@ -20,12 +20,9 @@ export default function Navbar({ Toggle }) {
             <nav class="navbar navbar-expand-lg bg-body-tertiary">
                 <div class="container-fluid">
 
-                    {user &&
+                    {/* {user &&
                         <i className="btn btn-primary m-2" onClick={Toggle}><FiAlignRight /></i>
-                    }
-
-
-
+                    } */}
 
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
@@ -96,9 +93,7 @@ export default function Navbar({ Toggle }) {
                             </form>
                         )}
 
-
                     </div>
-
                 </div>
             </nav>
         </>

@@ -34,9 +34,6 @@ export default function Home() {
     //bulk select to update
     const [selectedWorkouts, setSelectedWorkouts] = useState([]);
 
-    // Add this state variable
-    const [adminAccountUpdate, setAdminAccountUpdate] = useState('');
-
     //set View Record Count in front end
     const [viewRecordCount, setViewRecordCount] = useState(10)
 
@@ -135,6 +132,7 @@ export default function Home() {
         return uniqueCategories;
     }
 
+
     // Update the filterByCategories function to set the selected category
     function filterByCategories(e) {
         const selectedCategoryValue = e.target.value;
@@ -147,6 +145,7 @@ export default function Home() {
         setSelectedCategory(selectedCategoryValue);
         
     }
+
 
     //fetch
     useEffect(() => {
@@ -173,8 +172,8 @@ export default function Home() {
         }
 
     }, [dispatch, user])
-
     console.log(dublicateWorkot)
+
 
     //delete
     const handleDelete = async (id) => {
@@ -274,6 +273,7 @@ export default function Home() {
         }
     }
 
+
     // export Excel File
     const generateExcelReport = () => {
         if (wworkouts.length === 0) {
@@ -325,7 +325,6 @@ export default function Home() {
             saveAs(blob, 'workouts.xlsx')
         })
     }
-
     const handleClick = () => {
         // Trigger the file input click event
         fileInputRef.current.click()
@@ -375,6 +374,19 @@ export default function Home() {
         });
     };
 
+
+    //get selected
+    const toggleSelect = (workoutId) => {
+        setSelectedWorkouts((prevSelected) => {
+            if (prevSelected.includes(workoutId)) {
+                // Deselect if already selected
+                return prevSelected.filter((id) => id !== workoutId);
+            } else {
+                // Select if not already selected
+                return [...prevSelected, workoutId];
+            }
+        });
+    };
     //update selected items
     const updateSelectedWorkouts = async (newStatus, newPaymentUpdate) => {
         const updatePromises = selectedWorkouts.map(async (id) => {
@@ -422,18 +434,7 @@ export default function Home() {
         setSelectedWorkouts([]);
     };
 
-    //get selected
-    const toggleSelect = (workoutId) => {
-        setSelectedWorkouts((prevSelected) => {
-            if (prevSelected.includes(workoutId)) {
-                // Deselect if already selected
-                return prevSelected.filter((id) => id !== workoutId);
-            } else {
-                // Select if not already selected
-                return [...prevSelected, workoutId];
-            }
-        });
-    };
+
 
     // Helper function to check if the due date is expired
     function isDueDateExpired(dueDate) {
