@@ -28,18 +28,8 @@ export const useSignup = () => {
             setIsLoading(false)
             setError(json.error || 'Signup failed')
             console.error('Signup error:', json) // Log the full error response for debugging
-        }
 
-        if (response.ok) {
-            // Save the user to local storage
-            localStorage.setItem('user', JSON.stringify(json))
-
-            // Update the auth context
-            dispatch({ type: ActionTypes.LOGIN, payload: json })
-
-            setIsLoading(false)
-
-            toast.success('Sign Up successfully', {
+            toast.error(error, {
                 position: "top-right",
                 autoClose: 5000,
                 hideProgressBar: false,
@@ -48,11 +38,9 @@ export const useSignup = () => {
                 draggable: true,
                 progress: undefined,
                 theme: "light",
-                onClose: () => {
-                    // Redirect to the login page after toast is closed
-                    window.location.href = '/login'
-                },
             })
+        }else {
+            window.location.href = '/login'
         }
     }
     <ToastContainer />
