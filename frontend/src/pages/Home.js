@@ -9,6 +9,7 @@ import { useAuthContext } from '../hooks/useAuthContext'
 import ExcelJS from 'exceljs'
 import saveAs from 'file-saver'
 import * as xlsx from 'xlsx'
+import Swal from 'sweetalert2';
 
 export default function Home() {
 
@@ -32,6 +33,8 @@ export default function Home() {
 
     //updatePayment useState
     const [paymentUpdate, setPaymentUpdate] = useState('')
+    //update Admin Accounts useState
+    const [adminAccountInput, setAdminAccountInput] = useState('');
 
     //bulk select to update
     const [selectedWorkouts, setSelectedWorkouts] = useState([]);
@@ -39,7 +42,6 @@ export default function Home() {
     //set View Record Count in front end
     const [viewRecordCount, setViewRecordCount] = useState(10)
 
-    const [adminAccountInput, setAdminAccountInput] = useState('');
 
     //set pagination
     const [currentPage, setCurrentPage] = useState(1)
@@ -202,15 +204,23 @@ export default function Home() {
 
 //delete
 const handleDelete = async (id) => {
-    // Show confirmation dialog
-    const confirmed = window.confirm("Are you sure you want to delete this workout?");
+    // Show SweetAlert2 confirmation dialog
+    const result = await Swal.fire({
+        title: 'Are you sure?',
+        text: 'You won\'t be able to revert this!',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
+    });
 
-    if (!confirmed) {
+    if (!result.isConfirmed) {
         // User canceled the deletion
         return;
     }
 
-    console.log('/api/workouts/' + id)
+    console.log('/api/workouts/' + id);
     const response = await fetch('/api/workouts/' + id, {
         method: 'DELETE',
         headers: {
@@ -223,14 +233,14 @@ const handleDelete = async (id) => {
 
     if (response.ok) {
         toast.success('Deleted Successfully', {
-            position: "top-right",
+            position: 'top-right',
             autoClose: 5000,
             hideProgressBar: false,
             closeOnClick: true,
             pauseOnHover: true,
             draggable: true,
             progress: undefined,
-            theme: "light",
+            theme: 'light',
         });
 
         dispatch({ type: 'DELETE_WORKOUT', payload: json });
@@ -522,9 +532,6 @@ const handleDelete = async (id) => {
         const workoutDueDate = new Date(dueDate);
         return workoutDueDate < today;
     }
-
-
-    
 
     return (
         <div>
