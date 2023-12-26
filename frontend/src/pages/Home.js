@@ -9,7 +9,6 @@ import { useAuthContext } from '../hooks/useAuthContext'
 import ExcelJS from 'exceljs'
 import saveAs from 'file-saver'
 import * as xlsx from 'xlsx'
-import moment from 'moment';
 
 export default function Home() {
 
@@ -31,11 +30,6 @@ export default function Home() {
     const [startDate, setStartDate] = useState('')
     const [endDate, setEndDate] = useState('')
 
-    // console.log(`startDate: ${startDate}`);
-    // console.log(`endDate: ${endDate}`);
-
-
-
     //updatePayment useState
     const [paymentUpdate, setPaymentUpdate] = useState('')
 
@@ -45,7 +39,7 @@ export default function Home() {
     //set View Record Count in front end
     const [viewRecordCount, setViewRecordCount] = useState(10)
 
-
+    const [adminAccountInput, setAdminAccountInput] = useState('');
 
     //set pagination
     const [currentPage, setCurrentPage] = useState(1)
@@ -115,16 +109,16 @@ export default function Home() {
 
         // Function to filter workouts by date range
         if (e) {
-            
-        const tempDate = dublicateWorkot.filter((workout) => {
-            const workoutDate = new Date(workout.dueDate);
-            return workoutDate >= new Date(startDate) && workoutDate <= new Date(endDate);
-        });
-        setWorkouts(tempDate);
-        }else {
+
+            const tempDate = dublicateWorkot.filter((workout) => {
+                const workoutDate = new Date(workout.dueDate);
+                return workoutDate >= new Date(startDate) && workoutDate <= new Date(endDate);
+            });
+            setWorkouts(tempDate);
+        } else {
             setWorkouts(dublicateWorkot)
         }
-    
+
     }
 
 
@@ -206,42 +200,51 @@ export default function Home() {
     console.log(dublicateWorkot)
 
 
-    //delete
-    const handleDelete = async (id) => {
-        console.log('/api/workouts/' + id)
-        const response = await fetch('/api/workouts/' + id, {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${user.token}`
-            }
-        })
+//delete
+const handleDelete = async (id) => {
+    // Show confirmation dialog
+    const confirmed = window.confirm("Are you sure you want to delete this workout?");
 
-        const json = await response.json()
-
-        if (response.ok) {
-            toast.success('Deleted Successfully', {
-                position: "top-right",
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "light",
-            })
-            dispatch({ type: 'DELETE_WORKOUT', payload: json })
-            console.log('deleted')
-
-            // Update the local state without refreshing the page
-            setWorkouts((prevWorkouts) => {
-                const updatedWorkouts = prevWorkouts.filter((workout) => workout._id !== id)
-                return updatedWorkouts
-            })
-        } else {
-            console.error('Failed to delete workout')
-        }
+    if (!confirmed) {
+        // User canceled the deletion
+        return;
     }
+
+    console.log('/api/workouts/' + id)
+    const response = await fetch('/api/workouts/' + id, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${user.token}`
+        }
+    });
+
+    const json = await response.json();
+
+    if (response.ok) {
+        toast.success('Deleted Successfully', {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+        });
+
+        dispatch({ type: 'DELETE_WORKOUT', payload: json });
+        console.log('deleted');
+
+        // Update the local state without refreshing the page
+        setWorkouts((prevWorkouts) => {
+            const updatedWorkouts = prevWorkouts.filter((workout) => workout._id !== id);
+            return updatedWorkouts;
+        });
+    } else {
+        console.error('Failed to delete workout');
+    }
+};
 
 
     //import excel file
@@ -465,7 +468,53 @@ export default function Home() {
         setSelectedWorkouts([]);
     };
 
+    //Update selected admin accounts
+    const updateAdminAccounts = async (newAdminAccount) => {
+        const updatePromises = selectedWorkouts.map(async (id) => {
+            const response = await fetch(`/api/workouts/${id}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${user.token}`
+                },
+                body: JSON.stringify({ adminAccount: newAdminAccount })
+            });
 
+            return response.json();
+        });
+
+        const updatedWorkouts = await Promise.all(updatePromises);
+
+        toast.success('Admin Accounts Updated Successfully', {
+            position: 'top-right',
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: 'light',
+        });
+
+        // Update both local and original state
+        setWorkouts((prevWorkouts) => {
+            const updated = prevWorkouts.map((workout) =>
+                selectedWorkouts.includes(workout._id) ? { ...workout, adminAccount: newAdminAccount } : workout
+            );
+            return updated;
+        });
+
+        setDublicateWorkot((prevWorkouts) => {
+            const updated = prevWorkouts.map((workout) =>
+                selectedWorkouts.includes(workout._id) ? { ...workout, adminAccount: newAdminAccount } : workout
+            );
+            return updated;
+        });
+
+        // Clear selected workouts and reset the admin account input
+        setSelectedWorkouts([]);
+        setAdminAccountInput('');
+    };
 
     // Helper function to check if the due date is expired
     function isDueDateExpired(dueDate) {
@@ -473,6 +522,9 @@ export default function Home() {
         const workoutDueDate = new Date(dueDate);
         return workoutDueDate < today;
     }
+
+
+    
 
     return (
         <div>
@@ -637,9 +689,13 @@ export default function Home() {
                             <td scope="col">
                                 <input
                                     type="text"
-                                    class="form-control"
+                                    className="form-control"
                                     placeholder="Admin Account"
-                                    value={workout.adminAccount}
+                                    value={adminAccountInput || workout.adminAccount} // Use the input value if available, otherwise use the existing value
+                                    onChange={(e) => {
+                                        setAdminAccountInput(e.target.value);
+                                        updateAdminAccounts(e.target.value); // Update the admin account in real-time
+                                    }}
                                 />
 
                             </td>
