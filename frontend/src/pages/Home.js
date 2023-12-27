@@ -202,59 +202,59 @@ export default function Home() {
     console.log(dublicateWorkot)
 
 
-//delete
-const handleDelete = async (id) => {
-    // Show SweetAlert2 confirmation dialog
-    const result = await Swal.fire({
-        title: 'Are you sure?',
-        text: 'You won\'t be able to revert this!',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, delete it!'
-    });
+    //delete
+    const handleDelete = async (id) => {
+        // Show SweetAlert2 confirmation dialog
+        const result = await Swal.fire({
+            title: 'Are you sure?',
+            text: 'You won\'t be able to revert this!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        });
 
-    if (!result.isConfirmed) {
-        // User canceled the deletion
-        return;
-    }
-
-    console.log('/api/workouts/' + id);
-    const response = await fetch('/api/workouts/' + id, {
-        method: 'DELETE',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${user.token}`
+        if (!result.isConfirmed) {
+            // User canceled the deletion
+            return;
         }
-    });
 
-    const json = await response.json();
-
-    if (response.ok) {
-        toast.success('Deleted Successfully', {
-            position: 'top-right',
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: 'light',
+        console.log('/api/workouts/' + id);
+        const response = await fetch('/api/workouts/' + id, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${user.token}`
+            }
         });
 
-        dispatch({ type: 'DELETE_WORKOUT', payload: json });
-        console.log('deleted');
+        const json = await response.json();
 
-        // Update the local state without refreshing the page
-        setWorkouts((prevWorkouts) => {
-            const updatedWorkouts = prevWorkouts.filter((workout) => workout._id !== id);
-            return updatedWorkouts;
-        });
-    } else {
-        console.error('Failed to delete workout');
-    }
-};
+        if (response.ok) {
+            toast.success('Deleted Successfully', {
+                position: 'top-right',
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: 'light',
+            });
+
+            dispatch({ type: 'DELETE_WORKOUT', payload: json });
+            console.log('deleted');
+
+            // Update the local state without refreshing the page
+            setWorkouts((prevWorkouts) => {
+                const updatedWorkouts = prevWorkouts.filter((workout) => workout._id !== id);
+                return updatedWorkouts;
+            });
+        } else {
+            console.error('Failed to delete workout');
+        }
+    };
 
 
     //import excel file
@@ -536,6 +536,32 @@ const handleDelete = async (id) => {
     return (
         <div>
 
+{selectedWorkouts.length > 0 && (
+    <div class="row mt-3" style={{ marginBottom: '-40px' }}>
+        <div class="col-2 mt-2">
+            <input
+                type="text"
+                class="form-control"
+                placeholder="Change Admin Account"
+                onChange={(e) => {
+                    setAdminAccountInput(e.target.value);
+                }}
+            />
+        </div>
+
+        <div class="col-2">
+            <button
+                className='btn btn-primary my-2 ms-auto'
+                onClick={() => updateAdminAccounts(adminAccountInput)}
+            >
+                change
+            </button>
+        </div>
+    </div>
+)}
+
+
+
             <nav class="navbar navbar-expand-lg bg-body-tertiary mt-5">
                 <div class="container-fluid">
 
@@ -691,21 +717,10 @@ const handleDelete = async (id) => {
                                     onChange={() => toggleSelect(workout._id)}
                                 />
                             </td>
+                            
                             <td scope="col">{workout.name}</td>
                             <td scope="col">{workout.email}</td>
-                            <td scope="col">
-                                <input
-                                    type="text"
-                                    className="form-control"
-                                    placeholder="Admin Account"
-                                    value={adminAccountInput || workout.adminAccount} // Use the input value if available, otherwise use the existing value
-                                    onChange={(e) => {
-                                        setAdminAccountInput(e.target.value);
-                                        updateAdminAccounts(e.target.value); // Update the admin account in real-time
-                                    }}
-                                />
-
-                            </td>
+                            <td scope="col">{workout.adminAccount}</td>
                             <td scope="col">{workout.payment}</td>
 
                             <td scope="col">
